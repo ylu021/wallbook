@@ -4,7 +4,7 @@ import Button from '../component/button';
 class Profile extends Component {
   render() {
     return (
-      <div>
+      <div className="profile">
         { this.props.user? <User /> : <LoginForm />}
       </div>
     );
@@ -13,7 +13,7 @@ class Profile extends Component {
 
 const ProfileSection = (props) => {
   return (
-    <div className="profile">
+    <div>
       {props.children}
     </div>)
 }

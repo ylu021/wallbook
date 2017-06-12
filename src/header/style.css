@@ -9,5 +9,13 @@
 }
 
 .banner {
-  width: 30%;
+  width: 20%;
+}
+
+.search {
+  width: 60%;
+}
+
+.profile {
+  width: 20%;
 }
