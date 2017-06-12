@@ -4,14 +4,15 @@ import Header from './header';
 import Feed from './feed';
 
 
-class App extends Component {
+class Home extends Component {
   render() {
     return (
-      <div className="App">
-        {this.props.children}
+      <div className="home">
+        <Header user=""/>
+        <Feed/>
       </div>
     );
   }
 }
 
-export default App;
+export default Home;
