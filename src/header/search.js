@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Feed from '../feed';
+import Button from '../component/button'
 
 class Search extends Component {
   render() {

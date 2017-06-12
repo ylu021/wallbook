@@ -4,6 +4,7 @@ import Banner from './banner';
 import Search from './search';
 import Profile from '../profile';
 import PropTypes from 'prop-types';
+import './style.css';
 
 class Header extends Component {
   constructor(props) {

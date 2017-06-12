@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 
-export const Button = (props) => (
+const Button = (props) => (
   <button>
     {props.text}
   </button>
 );
+
+export default Button;

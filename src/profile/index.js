@@ -1,20 +1,27 @@
 import React, { Component } from 'react';
-import { Button } from '../component/button';
+import Button from '../component/button';
 
 class Profile extends Component {
   render() {
     return (
-      <div className="home">
-        {this.props.user? <User /> : <LoginForm />}
+      <div>
+        { this.props.user? <User /> : <LoginForm />}
       </div>
     );
   }
 }
 
+const ProfileSection = (props) => {
+  return (
+    <div className="profile">
+      {props.children}
+    </div>)
+}
+
 class User extends Component {
   render() {
     return (
-      <div>User logined</div>
+      <ProfileSection>User logined</ProfileSection>
     )
   }
 }
@@ -22,10 +29,10 @@ class User extends Component {
 class LoginForm extends Component {
   render() {
     return (
-      <div>
+      <ProfileSection>
         <Button text='Login'/>
         <Button text='Sign Up'/>
-      </div>
+      </ProfileSection>
     )
   }
 }
