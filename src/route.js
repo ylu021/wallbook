@@ -12,6 +12,7 @@ import Login from './login'
 export const Routes = (props) => (
   <Router {...props}>
     <Switch>
+      <Route exact path="/" component={Home} />
       <Route path="/login" component={Login}/>
       <PrivateRoute path="/home" component={Home}/>
     </Switch>
@@ -19,16 +20,15 @@ export const Routes = (props) => (
 );
 
 export const fakeAuth = {
-  isAuthenticated: false,
+  isAuthenticated: localStorage.getItem('auth') || false,
   authenticate(cb) {
-    console.log('yoyo');
     this.isAuthenticated = true
     cb()
-    // setTimeout(cb, 100) // fake async
+    setTimeout(cb, 100) // fake async
   },
   signout(cb) {
     this.isAuthenticated = false
-    // setTimeout(cb, 100) // fake async
+    setTimeout(cb, 100) // fake async
   }
 }
 

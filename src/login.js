@@ -15,6 +15,7 @@ class Login extends Component {
   }
   login = () => {
     fakeAuth.authenticate(() => {
+      localStorage.setItem('auth', true)
       this.setState({
         redirect: true,
       })
@@ -24,7 +25,6 @@ class Login extends Component {
     const { from } = this.props.location.state || { from: { pathname: '/home' } }
     const { redirect } = this.state
     if(redirect) {
-      console.log('im redirecting', from )
       return <Redirect to={ from } />
     }
     return (
