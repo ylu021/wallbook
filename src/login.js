@@ -4,6 +4,7 @@ import Header from './header'
 import Feed from './feed'
 import { fakeAuth } from './route';
 import { Redirect } from 'react-router-dom'
+import { Button } from 'reactstrap'
 
 
 class Login extends Component {
@@ -24,6 +25,9 @@ class Login extends Component {
   render() {
     const { from } = this.props.location.state || { from: { pathname: '/home' } }
     const { redirect } = this.state
+    if(localStorage.getItem('auth')!==null) {
+      return <Redirect to={'/'} />
+    }
     if(redirect) {
       return <Redirect to={ from } />
     }
@@ -31,7 +35,7 @@ class Login extends Component {
       <div className="home">
         <Header user=""/>
         <Feed/>
-        <button className="btn-login" onClick={this.login}>Login</button>
+        <Button className="btn-login" onClick={this.login} color="primary">Login</Button>
       </div>
     );
   }
