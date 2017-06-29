@@ -1,9 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
+import { Button } from 'reactstrap'
 
-const Button = (props) => (
-  <button>
-    {props.text}
-  </button>
-);
+const CusButton = (props) => {
+  const {children, ...others} = props
+  return (
+    <Button {...others}>
+      {children}
+    </Button>
+  )
+}
 
-export default Button;
+export default CusButton

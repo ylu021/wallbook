@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
 import Feed from '../feed';
 import Button from '../component/button'
+import { InputGroup, InputGroupAddon, Input } from 'reactstrap'
+
 
 class Search extends Component {
   render() {
     return (
       <div className="search">
-        <input
-          id="query"
-          className="search-input"
-          type="text"
-          placeholder="explore topics"
-         />
+        <InputGroup>
+          <Input id="query" placeholder="exlore topics" />
+          <InputGroupAddon>search</InputGroupAddon>
+        </InputGroup>
       </div>
+
     );
   }
 }

@@ -1,9 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
+import { NavbarBrand } from 'reactstrap'
 
-const Banner = (props)=> (
-  <div className="banner">
-    <img src="#" alt="Wallbook" />
-  </div>
-);
+const Banner = (props)=> {
+  const {children, ...others} = props
+  return (
+    <NavbarBrand {...others}>{children}</NavbarBrand>
+  )
+}
 
 export default Banner;

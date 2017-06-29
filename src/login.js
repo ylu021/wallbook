@@ -16,18 +16,16 @@ class Login extends Component {
   }
   login = () => {
     fakeAuth.authenticate(() => {
-      localStorage.setItem('auth', true)
-      this.setState({
-        redirect: true,
-      })
+      if('redirect' in this.state) {
+        this.setState({
+          redirect: true,
+        })
+      }
     })
   }
   render() {
     const { from } = this.props.location.state || { from: { pathname: '/home' } }
     const { redirect } = this.state
-    if(localStorage.getItem('auth')!==null) {
-      return <Redirect to={'/'} />
-    }
     if(redirect) {
       return <Redirect to={ from } />
     }
