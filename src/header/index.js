@@ -25,7 +25,7 @@ class Header extends Component {
 
   render() {
     return (
-      <header>
+      <header className="cusheader">
         <div className="header container-fluid">
           <Navbar light toggleable>
             <NavbarToggler right onClick={this.toggle} />
@@ -37,7 +37,7 @@ class Header extends Component {
                 <NavItem>
                    <Search />
                 </NavItem>
-                <NavItem>
+                <NavItem className="pl-2">
                   <Profile {...this.props} />
                 </NavItem>
               </Nav>

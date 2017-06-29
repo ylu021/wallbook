@@ -14,8 +14,8 @@ class Home extends Component {
       // user
       return (
         <div className="home">
-          <p>Welcome user XXX</p>
           <Header user="" logined={true}/>
+          <p>Welcome user XXX</p>
           <Feed/>
         </div>
       )
@@ -23,8 +23,8 @@ class Home extends Component {
 
     return (
       <div className="home">
-        <p>Landing</p>
         <Header user="" logined={false}/>
+        <p>Landing</p>
         <Feed/>
       </div>
     )
