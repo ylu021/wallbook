@@ -13,6 +13,7 @@
     "eslint-plugin-jsx-a11y": "^6.0.0",
     "eslint-plugin-react": "^7.1.0",
     "jshint": "^2.9.4",
+    "lodash": "^4.17.4",
     "react-addons-test-utils": "^15.0.0-rc.2",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
