@@ -5,7 +5,7 @@ import Header from "./header";
 import Feed from "./feed";
 import {fakeAuth} from "./route";
 import CusButton from './component/button'
-import { CusForm, FormRow } from './component/form'
+import { CusForm, FormRow, validateField, validateForm } from './component/form'
 import _ from 'lodash'
 
 class Signup extends Component {
@@ -28,40 +28,16 @@ class Signup extends Component {
     this.setState({
       [name]: value.trim(),
     })
-    this.validateField(name, value)
-  }
-  validateField = (name, value) => {
-    let formErrors = this.state.formErrors
-    console.log(formErrors);
-    switch(name) {
-      case 'email':
-        formErrors['email'] = !(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i).test(value)
-        break
-      case 'password':
-        formErrors['password'] = !(value.length >= 8)
-        break
-      case 'passwordc':
-        formErrors['passwordc'] = !(this.state.password === value)
-      default:
-        break
-    }
-    this.setState({
-      formErrors: formErrors,
-    })
-
-    this.validateForm()
-  }
-  validateForm = () => {
-    const formErrors = {
-      email: false,
-      password: false,
-      passwordc: false,
-    }
-    if(this.state.email && this.state.password && this.state.passwordc) {
+    validateField(this.state, name, value, (res) => {
       this.setState({
-        formValid: _.isEqual(formErrors, this.state.formErrors),
+        formErrors: res,
       })
-    }
+      validateForm('signup', this.state, (res)=>{
+        this.setState({
+          formValid: res
+        })
+      })
+    })
   }
   render() {
     const {email, password, passwordc} = this.state.formErrors

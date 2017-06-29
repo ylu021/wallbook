@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Form, FormGroup, FormFeedback, Label, Input } from "reactstrap"
 import PropTypes from 'prop-types'
+import _ from 'lodash'
 
 export const CusForm = (props) => (
   <Form>
@@ -23,6 +24,38 @@ export const FormRow = (props) => {
 }
 
 FormRow.PropTypes = {
+  name: PropTypes.string,
   label: PropTypes.string,
   inputtype: PropTypes.string,
+  onChange: PropTypes.function,
+  error: PropTypes.boolean,
+}
+
+export const validateField = (state, name, value, cb) => {
+  switch(name) {
+    case 'email':
+      state.formErrors['email'] = !(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i).test(value)
+      break
+    case 'password':
+      state.formErrors['password'] = !(value.length >= 8)
+      break
+    case 'passwordc':
+      state.formErrors['passwordc'] = !(state.password === value)
+    default:
+      break
+  }
+  return cb(state.formErrors)
+}
+
+export const validateForm = (formtype, state, cb) => {
+  let formErrors = {
+    email: false,
+    password: false,
+  }
+  formErrors['passwordc'] = formtype==='signup'? false : undefined
+  const passwordcCheck = 'passwordc' in formErrors? state.passwordc : true
+  console.log(formErrors, 'passwordc' in formErrors)
+  if(state.email && state.password && passwordcCheck) {
+    return cb(_.isEqual(formErrors, state.formErrors))
+  }
 }
