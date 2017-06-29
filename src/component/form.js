@@ -10,13 +10,13 @@ export const CusForm = (props) => (
 )
 
 export const FormRow = (props) => {
-  const {name, label, inputtype, onChange, error} = props
+  const {name, label, inputtype, onChange, error, ...others} = props
   const state = !error? null : 'danger'
   const tooltip = ' (minimum length 8)'
   return (
     <FormGroup color={state}>
       <Label htmlFor={name} >{name==='password'? label+tooltip : label}</Label>
-      <Input type={inputtype} name={name} onChange={onChange} state={state} />
+      <Input {...others} type={inputtype} name={name} onChange={onChange} state={state} />
       {error? <FormFeedback>Invalid {name}</FormFeedback> : null}
 
     </FormGroup>
@@ -52,9 +52,11 @@ export const validateForm = (formtype, state, cb) => {
     email: false,
     password: false,
   }
-  formErrors['passwordc'] = formtype==='signup'? false : undefined
+  if(formtype==='signup'){
+    formErrors['passwordc'] = false
+  }
   const passwordcCheck = 'passwordc' in formErrors? state.passwordc : true
-  console.log(formErrors, 'passwordc' in formErrors)
+  //console.log(formErrors, typeof(formErrors['passwordc'])==='undefined')
   if(state.email && state.password && passwordcCheck) {
     return cb(_.isEqual(formErrors, state.formErrors))
   }

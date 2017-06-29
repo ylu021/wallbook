@@ -39,6 +39,9 @@ class Signup extends Component {
       })
     })
   }
+  onPaste = (e) => {
+    e.preventDefault()
+  }
   render() {
     const {email, password, passwordc} = this.state.formErrors
     return (
@@ -51,7 +54,7 @@ class Signup extends Component {
               <CusForm>
                 <FormRow label="email" name="email" inputtype="email" onChange={this.handleInput} error={email}/>
                 <FormRow label="password" name="password" inputtype="password" onChange={this.handleInput} error={password} />
-                <FormRow label="Confirm password" name="passwordc" inputtype="password" onChange={this.handleInput} error={passwordc} />
+                <FormRow onPaste={this.onPaste} label="Confirm password" name="passwordc" inputtype="password" onChange={this.handleInput} error={passwordc} />
                 <CusButton color="primary" disabled={!this.state.formValid} className="btn-submit">Submit</CusButton>
               </CusForm>
             </div>
