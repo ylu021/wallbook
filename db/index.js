@@ -7,5 +7,5 @@ const pool = new Pool({connectionString: connectionString})
 
 module.exports = {
   pool,
-  query: (text, params) => pool.query(text, params)
+  pquery: (text, params) => pool.query(text, params)
 }
