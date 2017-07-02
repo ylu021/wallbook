@@ -34,7 +34,7 @@ const insertquery = async () => {
   }
 }
 
-insertquery().catch( e => console.error(e.stack))
+// insertquery().catch( e => console.error(e.stack))
 
 // pool.connect((err, client, done) => {
 //   if (err) throw err
