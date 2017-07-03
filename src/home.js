@@ -4,8 +4,15 @@ import './App.css'
 import Header from './header'
 import Feed from './feed'
 import { fakeAuth } from './route'
-import { Trending } from './landing'
+import { Trending } from './trending'
 
+import styled from 'styled-components'
+
+const StyledContent = styled.div`
+  background-color: #F9F9F9;
+  text-align: center;
+  padding: 2rem 0;
+`
 
 class Home extends Component {
   constructor(props) {
@@ -20,25 +27,24 @@ class Home extends Component {
     if(localStorage.getItem('auth')!==null) {
       // user
       return (
-        <div className="home">
+        <div>
           <Header user="" logined={true}/>
-          <p>Welcome user XXX</p>
-          <Feed/>
+          <StyledContent>
+            <Trending topics={this.state.topics} />
+            <p>Welcome user XXX</p>
+            <Feed/>
+          </StyledContent>
         </div>
       )
     }
 
     return (
-      <div className="home">
+      <div>
         <Header user="" logined={false}/>
-        <Trending topics={this.state.topics}>
-          <ul>
-            {this.state.topics.map((topic, idx) => (
-              (<li className="trending-topic" key={idx}>{topic}</li>)
-            ))}
-          </ul>
-        </Trending>
-        <Feed/>
+        <StyledContent>
+          <Trending topics={this.state.topics} />
+          <Feed/>
+        </StyledContent>
       </div>
     )
   }

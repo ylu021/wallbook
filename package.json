@@ -29,7 +29,8 @@
     "express": "^4.15.3",
     "pg": "^6.4.0",
     "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "react-dom": "^15.5.4",
+    "styled-components": "^2.1.0"
   },
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",

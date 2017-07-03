@@ -5,7 +5,7 @@ import Search from './search'
 import Profile from '../profile'
 import PropTypes from 'prop-types'
 import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap'
-import './style.css'
+import styled from 'styled-components'
 
 class Header extends Component {
   constructor(props) {
@@ -25,9 +25,9 @@ class Header extends Component {
 
   render() {
     return (
-      <header className="cusheader">
-        <div className="header container-fluid">
-          <Navbar light toggleable>
+      <header>
+        <div className="container-fluid">
+          <Navbar light toggleable className="justify-content-center">
             <NavbarToggler right onClick={this.toggle} />
             <Banner href="/">
               <img src="#" alt="Wallbook" />
