@@ -1,12 +1,21 @@
 // import db from './db'
 const { pool, pquery } = require('./db')
 const express = require('express')
-
 const app = express()
 const port = 8080
 
-app.get('/', (request, response) => {
-  response.send('hello from express!')
+app.get('/', (req, res) => {
+  res.send('hello from express!')
+})
+
+app.get('/api/users', (req, res, next) => {
+  (async() => {
+    const client = await pool.connect()
+    const query = pquery.bind(client)
+    const result = await client.query('SELECT * FROM Users')
+    client.release()
+    res.json(result.rows)
+  })().catch(next)
 })
 
 app.listen(port, () => {

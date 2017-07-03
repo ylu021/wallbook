@@ -1,5 +1,5 @@
 import types from '../constant'
-import getUsers from '../api'
+import { getUsers } from '../api'
 
 export const addUser = (user) => {
   console.log('calling action add user')
