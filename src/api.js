@@ -1,10 +1,22 @@
-// export default () => {
-//   return new Promise((resolve, rej) => {
-//     setTimeout(() => {
-//       return resolve(fakeusers)
-//     }, 1000)
-//   })
-// }
+export async function addUser(user) {
+  console.log('im a user', JSON.stringify(user))
+  let response = await fetch('api/users', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(user)
+  })
+  let data = await response.json()
+  console.log(data)
+  // convert stringify to json using parse, this is a shortcut
+  return data
+}
+
+addUser()
+  .catch(e => console.error(e.stack))
+
 
 export async function getUsers() {
   let response = await fetch('api/users')

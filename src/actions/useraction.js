@@ -1,22 +1,24 @@
 import types from '../constant'
-import { getUsers } from '../api'
+import * as api from '../api'
 
-export const addUser = (user) => {
-  console.log('calling action add user')
-  return {
-    type: types.ADD_USER,
-    payload: {
-        promise: getUsers(), // a promise
-        user: user // optional data object for optimistic update
-    }
-  }
-}
-// (
-//   {
+// get user not add user
+// export const addUser = (user) => {
+//   console.log('calling action add user')
+//   return {
 //     type: types.ADD_USER,
-//     user: {
-//         promise: getUsers(), // a promise
-//         data: user // optional data object for optimistic update
+//     payload: {
+//         promise: api.getUsers(), // a promise
+//         user: user // optional data object for optimistic update
 //     }
 //   }
-// )
+// }
+
+export const addUser = (user) => {
+    return {
+      type: types.ADD_USER,
+      payload: {
+        promise: api.addUser(user),
+        added: user // optimal update added user
+      }
+    }
+}
