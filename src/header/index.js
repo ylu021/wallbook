@@ -30,13 +30,13 @@ class Header extends Component {
           <Navbar light toggleable className="justify-content-center">
             <NavbarToggler right onClick={this.toggle} />
             <Banner href="/">
-              <img src="#" alt="Wallbook" />
+              <img src="logo.svg" alt="Wallbook" />
             </Banner>
             <Collapse isOpen={this.state.isOpen} navbar>
               <Nav className="ml-auto" navbar>
-                <NavItem>
+                {/* <NavItem>
                    <Search />
-                </NavItem>
+                </NavItem> */}
                 <NavItem className="pl-2">
                   <Profile {...this.props} />
                 </NavItem>

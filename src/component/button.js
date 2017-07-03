@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Button } from 'reactstrap'
+import PropTypes from 'prop-types'
 
 const CusButton = (props) => {
   const {children, ...others} = props
@@ -8,6 +9,11 @@ const CusButton = (props) => {
       {children}
     </Button>
   )
+}
+
+CusButton.PropTypes = {
+  color: PropTypes.string,
+  onClick: PropTypes.function,
 }
 
 export default CusButton

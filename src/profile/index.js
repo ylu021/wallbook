@@ -3,6 +3,7 @@ import CusButton from '../component/button'
 import { Link } from 'react-router-dom'
 import { withRouter, Redirect } from 'react-router-dom'
 import { fakeAuth } from '../route';
+import styled from 'styled-components'
 
 class Profile extends Component {
   render() {
@@ -26,40 +27,42 @@ class User extends Component {
     return (
       <ProfileSection>
         <LoginForm />
-        {/* <CusButton color="primary" onClick={this.signout}>{'Sign Out'}</CusButton> */}
       </ProfileSection>
     )
   }
 }
 
+const CusLink = styled(Link)`
+  color: #333;
+  font-size: 14px;
+  font-size: 1.4rem;
+  margin-right: 1rem;
+`
+
+const BoldCusLink = CusLink.extend`
+  font-weight: 500;
+`
+
 const LoginForm = withRouter(({ history }) => (
   fakeAuth.isAuthenticated ? (
     <ProfileSection>
-      <span>User logined</span>
-      <CusButton color="primary" onClick={
+      <span>User logined</span>{' '}
+      <BoldCusLink to='' onClick={
         () => (fakeAuth.signout(() => {
-          localStorage.clear()  
+          localStorage.clear()
           history.push('/')
         }))
-      }>{'Sign Out'}</CusButton>
+      } bold>{'Sign Out'}</BoldCusLink>
+
     </ProfileSection>
   ) : (
     <ProfileSection>
-      <Link to={'/login'}><CusButton color="primary">{'Log In'}</CusButton></Link>{' '}
-      <Link to={'/signup'}><CusButton color="primary">{'Sign Up'}</CusButton></Link>
+
+        <BoldCusLink to={'/login'}>{'Log In'}</BoldCusLink>
+        <CusLink to={'/signup'}>{'Sign Up'}</CusLink>
+
     </ProfileSection>
   )
 ))
-
-// class LoginForm extends Component {
-//   render() {
-//     return (
-//       <ProfileSection>
-//         <Link to={'/login'}><CusButton color="primary">{'Log In'}</CusButton></Link>{' '}
-//         <Link to={'/signup'}><CusButton color="primary">{'Sign Up'}</CusButton></Link>
-//       </ProfileSection>
-//     )
-//   }
-// }
 
 export default Profile
