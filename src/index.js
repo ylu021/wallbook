@@ -4,14 +4,21 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import { Routes } from './route';
-import {
-  BrowserRouter as Router,
-} from 'react-router-dom'
+import { Provider } from 'react-redux'
+import Store from './store'
+
+// ReactDOM.render(
+//   <Routes>
+//     <App/>
+//   </Routes>
+//   , document.getElementById('root'));
+
+const storeInstance = Store()
 
 ReactDOM.render(
-  <Routes>
-    <App/>
-  </Routes>
-  , document.getElementById('root'));
+  <Provider store={ storeInstance }>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+)
 registerServiceWorker();
