@@ -7,6 +7,9 @@ import {fakeAuth} from "./route";
 import CusButton from './component/button'
 import { CusForm, FormRow, validateField, validateForm } from './component/form'
 import _ from 'lodash'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import * as Actions from './actions/useraction'
 
 class Signup extends Component {
   constructor(props) {
@@ -65,4 +68,19 @@ class Signup extends Component {
   }
 }
 
-export default Signup
+const mapStateToProps = (state, props) => (
+  // state from store to props
+  {
+    users: state.users
+  }
+)
+
+const mapDispatchToProps = (dispatch) => (
+  // action from dispatch to store
+  {
+    action: bindActionCreators(Actions, dispatch)
+  }
+)
+
+export const TestSignup = Signup
+export default connect(mapStateToProps, mapDispatchToProps)(Signup)
