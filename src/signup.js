@@ -2,7 +2,7 @@
 import React, {Component} from "react";
 import "./App.css";
 import Header from "./header";
-import Feed from "./feed";
+import PickUsername from './profile/pickusername'
 import {fakeAuth} from "./route";
 import CusButton from './component/button'
 import { CusForm, FormRow, validateField, validateForm } from './component/form'
@@ -10,6 +10,7 @@ import _ from 'lodash'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as Actions from './actions/useraction'
+import PropTypes from 'prop-types'
 
 class Signup extends Component {
   constructor(props) {
@@ -59,38 +60,44 @@ class Signup extends Component {
 
   render() {
     const {email, password, passwordc} = this.state.formErrors
-    const { isFetching, error, user } = this.props
-    return (
-      <div>
-        <span>Something should happen {
-          isFetching? 'LOADING User': (
-            !error? 'DONE': 'ERROR'
-          )
-        }</span>
-        {user.length > 0 ? (
-          <ul>
-            {user.map((u, idx) => (
-              <li key={idx}>{u.email}-{u.password}</li>
-            ))}
-          </ul>
-          ) : null
-        }
-        <Header user="" logined={false}/>
-        <section id="signup" className="container">
-          <h1 className="text-center">Sign Up</h1>
-          <div className="row">
-            <div className="col-8 mx-auto cusform">
-              <CusForm>
-                <FormRow label="email" name="email" inputtype="email" onChange={this.handleInput} error={email}/>
-                <FormRow label="password" name="password" inputtype="password" onChange={this.handleInput} error={password} />
-                <FormRow onPaste={this.onPaste} label="Confirm password" name="passwordc" inputtype="password" onChange={this.handleInput} error={passwordc} />
-                <CusButton color="primary" disabled={!this.state.formValid} className="btn-submit" onClick={this.signup}>Submit</CusButton>
-              </CusForm>
+    const { isAdding, error, added, done } = this.props
+    if(added) {
+      console.log(this.state.email)
+      return (
+        <PickUsername
+          email={this.state.email}
+        />
+      )
+    }else {
+      return (
+        <div>
+          <span>Something should happen {
+            isAdding? 'Signing up': (
+              !error? null: 'ERROR'
+            )
+          }</span>
+          {
+            done && !added ? (
+              <span>This email is registered</span>
+            ) : null
+          }
+          <Header user="" logined={false}/>
+          <section id="signup" className="container">
+            <h1 className="text-center">Sign Up</h1>
+            <div className="row">
+              <div className="col-8 mx-auto cusform">
+                <CusForm>
+                  <FormRow label="email" name="email" inputtype="email" onChange={this.handleInput} error={email}/>
+                  <FormRow label="password" name="password" inputtype="password" onChange={this.handleInput} error={password} />
+                  <FormRow onPaste={this.onPaste} label="Confirm password" name="passwordc" inputtype="password" onChange={this.handleInput} error={passwordc} />
+                  <CusButton color="primary" disabled={!this.state.formValid} className="btn-submit" onClick={this.signup}>Submit</CusButton>
+                </CusForm>
+              </div>
             </div>
-          </div>
-        </section>
-      </div>
-    )
+          </section>
+        </div>
+      )
+    }
   }
 }
 
@@ -98,8 +105,9 @@ const mapStateToProps = (state, props) => {
     // state from store to props
   console.log(state.users)
   return {
-    user: state.users.user,
-    isFetching: state.users.isFetching,
+    added: state.users.added,
+    done: state.users.done,
+    isAdding: state.users.isAdding,
     error: state.users.error
   }
 }
@@ -110,6 +118,13 @@ const mapDispatchToProps = (dispatch) => (
     actions: bindActionCreators(Actions, dispatch)
   }
 )
+
+Signup.PropTypes = {
+  added: PropTypes.boolean,
+  isAdding: PropTypes.boolean,
+  error: PropTypes.boolean,
+  actions: PropTypes.function
+}
 
 export const TestSignup = Signup
 export default connect(mapStateToProps, mapDispatchToProps)(Signup)
