@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="70px" height="70px" viewBox="0 0 70 70" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.1 (35376) - http://www.bohemiancoding.com/sketch -->
+    <title>pig</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="35" cy="35" r="35"></circle>
+    </defs>
+    <g id="Avatar" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="76---iPad-(@1x)" transform="translate(-3.000000, -3.000000)">
+            <g id="pig" transform="translate(3.000000, 3.000000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="Mask" fill="#FFB4BD" xlink:href="#path-1"></use>
+                <g mask="url(#mask-2)">
+                    <g transform="translate(15.000000, 11.000000)">
+                        <path d="M7.79242705,3.36731919 C10.7458169,3.36731919 13.6992067,13.7519346 13.6992067,13.7519346 L1.88564739,13.7519346 C1.88564739,13.7519346 4.83903722,3.36731919 7.79242705,3.36731919 Z" id="Triangle" stroke="none" fill="#FFD6DB" transform="translate(7.792427, 8.559627) rotate(-33.000000) translate(-7.792427, -8.559627) "></path>
+                        <path d="M32.8093762,3.36731919 C35.762766,3.36731919 38.7161559,13.7519346 38.7161559,13.7519346 L26.9025965,13.7519346 C26.9025965,13.7519346 29.8559864,3.36731919 32.8093762,3.36731919 Z" id="Triangle-Copy" stroke="none" fill="#FFD6DB" transform="translate(32.809376, 8.559627) scale(-1, 1) rotate(-33.000000) translate(-32.809376, -8.559627) "></path>
+                        <ellipse id="shadow" stroke="none" fill-opacity="0.439679574" fill="#FFD6DB" cx="20.1525424" cy="27.3076923" rx="19.3050847" ry="19.2326454"></ellipse>
+                        <ellipse id="Oval" stroke="none" fill="#FFD6DB" cx="20.1525424" cy="27.3076923" rx="18.7627119" ry="18.6923077"></ellipse>
+                        <ellipse id="Oval-Copy" stroke="none" fill="#FFB4BD" cx="20.1525424" cy="23.8461538" rx="9.03389831" ry="9"></ellipse>
+                        <path d="M7.6440678,8.55962689 C8.86016949,8.55962689 10.0762712,12.0211653 10.0762712,12.0211653 L5.21186441,12.0211653 C5.21186441,12.0211653 6.4279661,8.55962689 7.6440678,8.55962689 Z" id="Triangle-Copy-3" stroke="#FFB4BD" stroke-width="1" fill="#FFB4BD" transform="translate(7.644068, 10.290396) rotate(-33.000000) translate(-7.644068, -10.290396) "></path>
+                        <path d="M32.6610169,8.55962689 C33.8771186,8.55962689 35.0932203,12.0211653 35.0932203,12.0211653 L30.2288136,12.0211653 C30.2288136,12.0211653 31.4449153,8.55962689 32.6610169,8.55962689 Z" id="Triangle-Copy-2" stroke="#FFB4BD" stroke-width="1" fill="#FFB4BD" transform="translate(32.661017, 10.290396) scale(-1, 1) rotate(-33.000000) translate(-32.661017, -10.290396) "></path>
+                        <g id="Group" stroke="none" stroke-width="1" fill="none" transform="translate(11.813559, 11.384615)">
+                            <ellipse id="Oval-Copy-2" fill="#333333" cx="1.38983051" cy="1.38461538" rx="1.38983051" ry="1.38461538"></ellipse>
+                            <ellipse id="Oval-Copy-3" fill="#333333" cx="15.2881356" cy="1.38461538" rx="1.38983051" ry="1.38461538"></ellipse>
+                        </g>
+                        <g id="Group-Copy" stroke="none" stroke-width="1" fill="none" transform="translate(12.508475, 21.076923)">
+                            <ellipse id="Oval-Copy-2" fill="#FFFFFF" cx="1.38983051" cy="1.38461538" rx="1.38983051" ry="1.38461538"></ellipse>
+                            <ellipse id="Oval-Copy-3" fill="#FFFFFF" cx="13.8983051" cy="1.38461538" rx="1.38983051" ry="1.38461538"></ellipse>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
