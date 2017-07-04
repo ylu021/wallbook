@@ -27,6 +27,27 @@ export default(state = initialState, action) => {
         isAdding: false,
         done: false
       }
+
+    case `${types.ADD_AVATAR}_LOADING`:
+      console.log('loading')
+      return {
+        addedAvatar: false,
+        isAdding: true,
+        done: false
+      }
+    case `${types.ADD_AVATAR}_SUCCESS`:
+      return {
+        added: true,
+        addedAvatar: action.payload.added,
+        isAdding: false,
+        done: true
+      }
+    case `${types.ADD_AVATAR}_ERROR`:
+      return {
+        error: action.payload,
+        isAdding: false,
+        done: false
+      }
     default:
       return state
   }

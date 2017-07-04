@@ -1,11 +1,12 @@
-export async function addUser(user) {
-  console.log('im a user', JSON.stringify(user))
-  let response = await fetch('api/users', {
-    method: 'POST',
-    headers: {
+const headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
-    },
+}
+
+export async function addUser(user) {
+  let response = await fetch('api/users', {
+    method: 'POST',
+    headers,
     body: JSON.stringify(user)
   })
   let data = await response.json()
@@ -16,6 +17,19 @@ export async function addUser(user) {
 
 addUser()
   .catch(e => console.error(e.stack))
+
+export async function addAvatar(user) {
+  let response = await fetch(`api/users`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify(user)
+  })
+  let data = await response.json()
+  return data
+}
+
+addAvatar()
+  .catch(e => console.log(e.stack))
 
 
 export async function getUsers() {

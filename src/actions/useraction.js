@@ -22,3 +22,13 @@ export const addUser = (user) => {
       }
     }
 }
+
+export const addAvatar = (user) => {
+    return {
+      type: types.ADD_AVATAR,
+      payload: {
+        promise: api.addAvatar(user),
+        addedAvatar: user // optimal update added user
+      }
+    }
+}

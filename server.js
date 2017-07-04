@@ -48,6 +48,34 @@ app.post('/api/users', (req, res, next) => {
   })().catch(next)
 })
 
+app.put('/api/users', (req, res, next) => {
+  (async() => {
+    const { email, avatar, username } = req.body
+    const client = await pool.connect()
+    const query = pquery.bind(client)
+
+    let added = false
+    const exist = await query('SELECT * FROM Users WHERE email = $1', [email])
+    const usernameExist = await query('SELECT * FROM Users WHERE username = $1', [username])
+    // email exist valid user and username does not exist
+    if(exist.rowCount===1 && usernameExist.rowCount!==1) {
+      const id = exist.rows[0].id
+      console.log(id)
+      try {
+        await query('BEGIN')
+        await query('UPDATE Users set avatar=$1, username=$2 WHERE id=$3', [avatar, username, id])
+        await query('COMMIT')
+        added = true
+      } catch(e) {
+        await query('ROLLBACK')
+        throw e
+      } 
+    }
+    client.release()
+    res.json({added: added})
+  })().catch(next)
+})
+
 app.listen(port, () => {
   console.log('server is listening on ', port)
 })
