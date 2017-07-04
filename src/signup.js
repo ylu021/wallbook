@@ -62,11 +62,14 @@ class Signup extends Component {
     const {email, password, passwordc} = this.state.formErrors
     const { isAdding, error, added, done } = this.props
     if(added) {
-      console.log(this.state.email)
+      console.log('inside added a user',this.state.email)
       return (
-        <PickUsername
-          email={this.state.email}
-        />
+        <div>
+          <Header user="" logined={false}/>
+          <PickUsername
+            email={this.state.email}
+          />
+        </div>
       )
     }else {
       return (

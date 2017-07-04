@@ -2,14 +2,7 @@
 import React, {Component} from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-
-const Title = styled.h1`
-  color: #FF0322;
-  font-size: 20px;
-  font-size: 2.2rem;
-  line-height: 2;
-  font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
-`
+import Title from '../App'
 
 const Topics = styled.ul`
   margin-top: 2rem;
