@@ -14,9 +14,7 @@ class Header extends Component {
       isOpen: false,
     }
   }
-  componentDidMount() {
-    console.log(this.props)
-  }
+
   toggle = () => {
     this.setState({
       isOpen: !this.state.isOpen,

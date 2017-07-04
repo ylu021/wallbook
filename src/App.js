@@ -7,15 +7,11 @@ import {
   BrowserRouter as Router,
 } from 'react-router-dom'
 
-
-
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <Routes>
         {this.props.children}
-        </Routes>
       </div>
     )
   }

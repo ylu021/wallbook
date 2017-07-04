@@ -45,7 +45,7 @@ const FeedDate = styled.span`
   font-size: 1.2rem;
 `
 
-const ProfileImg = styled.div`
+export const ProfileImg = styled.div`
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -54,7 +54,7 @@ const ProfileImg = styled.div`
   overflow: hidden;
 `
 
-const Img = styled.img`
+export const Img = styled.img`
   width: 100%;
   height: auto;
   display: inline;

@@ -6,6 +6,7 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import { Provider } from 'react-redux'
 import Store from './store'
+import { Routes } from './route';
 
 // ReactDOM.render(
 //   <Routes>
@@ -17,7 +18,7 @@ const storeInstance = Store()
 
 ReactDOM.render(
   <Provider store={ storeInstance }>
-    <App />
+    <Routes><App /></Routes>
   </Provider>,
   document.getElementById('root')
 )

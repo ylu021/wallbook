@@ -22,7 +22,7 @@ class Home extends Component {
     }
   }
   render() {
-    console.log('hello', localStorage.getItem('auth'))
+    // console.log('hello', localStorage.getItem('auth'))
     // this needs to be cached
     if(localStorage.getItem('auth')!==null) {
       // user
