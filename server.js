@@ -57,6 +57,7 @@ app.put('/api/users', (req, res, next) => {
     const query = pquery.bind(client)
 
     let added = false
+    let emailsent = false
     const exist = await query('SELECT * FROM Users WHERE email = $1', [email])
     const usernameExist = await query('SELECT * FROM Users WHERE username = $1', [username])
     // email exist valid user and username does not exist
@@ -79,15 +80,19 @@ app.put('/api/users', (req, res, next) => {
         // jwt token
         const token = jwt(userData) 
         // send email nodemailer
-        // const success = await sendEmailConfirmation(email, token)
-        // console.log('email', success)
-        // if(!success) {
-          // console.log('email failed')
-        // }
+        try {
+          const success = await sendEmailConfirmation(email, token)
+          emailsent = true
+        } catch(e) {
+          console.error(e)
+        }
       }
     }
     client.release()
-    res.json({added: added})
+    res.json({
+      added: added,
+      emailsent: emailsent
+    })
   })().catch(next)
 })
 
