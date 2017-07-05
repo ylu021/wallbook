@@ -11,8 +11,9 @@ export const CusForm = (props) => (
 )
 
 const StyledForm = styled(Form)`
-  width: 50%;
+  padding: 3rem;
   margin: 0 auto;
+  text-align: left;
 `
 
 export const FormRow = (props) => {
