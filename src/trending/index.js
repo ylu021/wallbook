@@ -2,7 +2,7 @@
 import React, {Component} from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import Title from '../App'
+import { Title } from '../component/title'
 
 const Topics = styled.ul`
   margin-top: 2rem;
