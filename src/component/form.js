@@ -1,22 +1,27 @@
 import React, { Component } from 'react'
-import { Form, FormGroup, FormFeedback, Label, } from "reactstrap"
+import { Form, FormGroup, FormFeedback, Label } from 'reactstrap'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import styled from 'styled-components'
 
 export const CusForm = (props) => (
-  <Form>
+  <StyledForm>
     {props.children}
-  </Form>
+  </StyledForm>
 )
+
+const StyledForm = styled(Form)`
+  width: 50%;
+  margin: 0 auto;
+`
 
 export const FormRow = (props) => {
   const {name, label, inputtype, error, inputRef, ...others} = props
   const state = !error? null : 'danger'
   const tooltip = ' (minimum length 8)'
   return (
-    <FormGroup color={state}>
-      <Label htmlFor={name} >{name==='password'? label+tooltip : label}</Label>
+    <FormGroup color={state} className='mb-5'>
+      <LabelFull htmlFor={name} >{name==='password'? label+tooltip : label}</LabelFull>
       <Input 
         {...others} 
         type={inputtype} 
@@ -31,14 +36,17 @@ export const FormRow = (props) => {
 }
 
 const Input = styled.input`
-  margin-top: 20%;
-  padding: .67857143em 1em;
-  background: #fff;
-  border: none;
-  border-bottom: 2px solid #F1F0F0;
+  width: 100%;
+  padding: 0.5rem;
+  font-weight: 500;
   font-size: 1.6rem;
-  text-align: center;
-  line-height: 0;
+  border-radius: 5px;
+  border: 1px solid #c0c0c0;
+`
+
+const LabelFull = styled(Label)`
+  width: 100%;
+  font-size: 1.6rem;
 `
 
 FormRow.PropTypes = {
