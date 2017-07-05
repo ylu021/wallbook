@@ -4,6 +4,7 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const port = 8080
+const { encrypt, decrypt, jwt, sendEmailConfirmation } = require('./auth')
 
 // process request body json
 app.use(bodyParser.json())
@@ -33,9 +34,10 @@ app.post('/api/users', (req, res, next) => {
     let added = false // check dup
     const exist = await query('SELECT * FROM Users WHERE email = $1', [email])
     if(exist.rowCount!==1 && req.body.hasOwnProperty('email')) {
+      const hashedpassword = encrypt(password)
       try {
         await query('BEGIN')
-        await query('INSERT INTO Users (email, password) VALUES ($1, $2)',[email, password])
+        await query('INSERT INTO Users (email, password) VALUES ($1, $2)',[email, hashedpassword])
         await query('COMMIT')
         added = true
       } catch(e) {
@@ -60,7 +62,6 @@ app.put('/api/users', (req, res, next) => {
     // email exist valid user and username does not exist
     if(exist.rowCount===1 && usernameExist.rowCount!==1) {
       const id = exist.rows[0].id
-      console.log(id)
       try {
         await query('BEGIN')
         await query('UPDATE Users set avatar=$1, username=$2 WHERE id=$3', [avatar, username, id])
@@ -69,7 +70,21 @@ app.put('/api/users', (req, res, next) => {
       } catch(e) {
         await query('ROLLBACK')
         throw e
-      } 
+      } finally {
+        const userData = {
+          id: id,
+          email: email,
+          username: username
+        }
+        // jwt token
+        const token = jwt(userData) 
+        // send email nodemailer
+        // const success = await sendEmailConfirmation(email, token)
+        // console.log('email', success)
+        // if(!success) {
+          // console.log('email failed')
+        // }
+      }
     }
     client.release()
     res.json({added: added})
