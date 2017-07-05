@@ -8,10 +8,11 @@ import { Trending } from './trending'
 
 import styled from 'styled-components'
 
-const StyledContent = styled.div`
+export const StyledContent = styled.div`
   background-color: #F9F9F9;
   text-align: center;
   padding: 2rem 0;
+  min-height: 100vh;
 `
 
 class Home extends Component {
