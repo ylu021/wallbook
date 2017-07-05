@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-const Title = styled.h1`
+export const Title = styled.h1`
  color: #FF0322;
  font-size: 20px;
  font-size: 2.2rem;
@@ -8,4 +8,12 @@ const Title = styled.h1`
  font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
 `
 
-export default Title
+export const InfoTitle = Title.extend`
+  font-size: 1.8rem;
+  color: #FF0322;
+`
+
+export const H2 = Title.extend`
+  color: #9B9B9B;
+  font-size: 2.0rem;
+`

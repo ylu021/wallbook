@@ -6,7 +6,9 @@ import PickUsername from './profile/pickusername'
 import {fakeAuth} from "./route";
 import CusButton from './component/button'
 import { CusForm, FormRow, validateField, validateForm } from './component/form'
+import Loading from './component/loading'
 import _ from 'lodash'
+import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as Actions from './actions/useraction'
@@ -61,6 +63,16 @@ class Signup extends Component {
   render() {
     const {email, password, passwordc} = this.state.formErrors
     const { isAdding, error, added, done } = this.props
+    if(isAdding) {
+      return (
+        <div>
+          <Header user="" logined={false}/>
+          <Section>
+            <Loading />
+          </Section>
+        </div>
+      )
+    }
     if(added) {
       console.log('inside added a user',this.state.email)
       return (
@@ -74,16 +86,6 @@ class Signup extends Component {
     }else {
       return (
         <div>
-          <span>Something should happen {
-            isAdding? 'Signing up': (
-              !error? null: 'ERROR'
-            )
-          }</span>
-          {
-            done && !added ? (
-              <span>This email is registered</span>
-            ) : null
-          }
           <Header user="" logined={false}/>
           <section id="signup" className="container">
             <h1 className="text-center">Sign Up</h1>
@@ -94,7 +96,20 @@ class Signup extends Component {
                   <FormRow label="password" name="password" inputtype="password" onChange={this.handleInput} error={password} />
                   <FormRow onPaste={this.onPaste} label="Confirm password" name="passwordc" inputtype="password" onChange={this.handleInput} error={passwordc} />
                   <CusButton color="primary" disabled={!this.state.formValid} className="btn-submit" onClick={this.signup}>Submit</CusButton>
+                  <div className='mt-2'>
+                    <Span>{
+            isAdding? 'Signing up': (
+              !error? null: 'Error signing up, please try again'
+            )
+          }</Span>
+          {
+            done && !added ? (
+              <Span>This email is registered</Span>
+            ) : null
+          }
+                  </div>
                 </CusForm>
+                
               </div>
             </div>
           </section>
@@ -103,6 +118,15 @@ class Signup extends Component {
     }
   }
 }
+
+const Span = styled.span`
+  font-size: 1.8rem;
+  color: coral;
+`
+
+const Section = styled.section`
+  padding-top: 15%;
+`
 
 const mapStateToProps = (state, props) => {
     // state from store to props
