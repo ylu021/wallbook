@@ -6,6 +6,8 @@ import { fakeAuth } from './route';
 import { Redirect } from 'react-router-dom'
 import CusButton from './component/button'
 import { CusForm, FormRow, validateField, validateForm } from './component/form'
+import { FormWrapper } from './signup'
+import { StyledContent } from './home'
 
 
 class Login extends Component {
@@ -55,20 +57,22 @@ class Login extends Component {
       return <Redirect to={ from } />
     }
     return (
-      <div className="home">
+      <div>
         <Header user="" logined={false}/>
-        <section id="login" className="container">
-          <h1 className="text-center">Log In</h1>
-          <div className="row">
-            <div className="col-8 mx-auto cusform">
-              <CusForm>
-                <FormRow label="email" name="email" inputtype="email" onChange={this.handleInput} error={email}/>
-                <FormRow label="password" name="password" inputtype="password" onChange={this.handleInput} error={password}/>
-                <CusButton className="btn-login" onClick={this.login} color="primary" disabled={!this.state.formValid}>Login</CusButton>
-              </CusForm>
+        <StyledContent>
+          <section id="login" className="container">
+            <h1 className="text-center">Log In</h1>
+            <div className="row">
+              <FormWrapper className="col-md-6 mx-auto">
+                <CusForm>
+                  <FormRow label="email" name="email" inputtype="email" onChange={this.handleInput} error={email}/>
+                  <FormRow label="password" name="password" inputtype="password" onChange={this.handleInput} error={password}/>
+                  <CusButton className="btn-login" onClick={this.login} color="primary" disabled={!this.state.formValid}>Login</CusButton>
+                </CusForm>
+              </FormWrapper>
             </div>
-          </div>
-        </section>
+          </section>
+        </StyledContent>
       </div>
     );
   }
