@@ -1,7 +1,6 @@
 
 import React, {Component} from "react";
 import "./App.css";
-import Header from "./header";
 import PickUsername from './profile/pickusername'
 import { StyledContent } from './home'
 import {fakeAuth} from "./route";
@@ -67,7 +66,6 @@ class Signup extends Component {
     if(isAdding) {
       return (
         <div>
-          <Header user="" logined={false}/>
           <Section>
             <Loading />
           </Section>
@@ -78,7 +76,6 @@ class Signup extends Component {
       console.log('inside added a user',this.state.email)
       return (
         <div>
-          <Header user="" logined={false}/>
           <PickUsername
             email={this.state.email}
           />
@@ -87,7 +84,6 @@ class Signup extends Component {
     }else {
       return (
         <div>
-          <Header user="" logined={false}/>
           <StyledContent>
             <section id="signup" className="container">
               <h1 className="text-center">Sign Up</h1>

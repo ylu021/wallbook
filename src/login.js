@@ -58,7 +58,6 @@ class Login extends Component {
     }
     return (
       <div>
-        <Header user="" logined={false}/>
         <StyledContent>
           <section id="login" className="container">
             <h1 className="text-center">Log In</h1>

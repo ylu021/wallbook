@@ -29,7 +29,7 @@ class Home extends Component {
       // user
       return (
         <div>
-          <Header user="" logined={true}/>
+          {/*<Header user="" logined={true}/>*/}
           <StyledContent>
             <Trending topics={this.state.topics} />
             <p>Welcome user XXX</p>
@@ -41,7 +41,7 @@ class Home extends Component {
 
     return (
       <div>
-        <Header user="" logined={false}/>
+        {/*<Header user="" logined={false}/>*/}
         <StyledContent>
           <Trending topics={this.state.topics} />
           <Feed/>
