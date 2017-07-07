@@ -9,11 +9,17 @@ import { Switch, Route } from 'react-router'
 import Home from './home'
 import Login from './login'
 import Signup from './signup'
+import Verification from './verification'
+// import Verified from './verification/verified'
+import Loading from './component/loading'
+import Verified from './verification/confirmation'
 
 export const Routes = (props) => (
   <Router {...props}>
     <Switch>
       <Route exact path="/" component={Home} />
+      <Route exact path="/verify/:token" component={Verified} />
+      <Route exact path="/verify" component={Verification} />
       <PrivateRoute2 path="/login" component={Login}/>
       <PrivateRoute2 path="/signup" component={Signup}/>
       <PrivateRoute path="/home" component={Home}/>
