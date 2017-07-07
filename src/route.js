@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom'
 import { Switch, Route } from 'react-router'
 
+import Header from './header'
 import Home from './home'
 import Login from './login'
 import Signup from './signup'
@@ -14,16 +15,24 @@ import Verification from './verification'
 import Loading from './component/loading'
 import Verified from './verification/confirmation'
 
+Route.prototype.wrapper = {
+  
+}
+
 export const Routes = (props) => (
   <Router {...props}>
-    <Switch>
-      <Route exact path="/" component={Home} />
-      <Route exact path="/verify/:token" component={Verified} />
-      <Route exact path="/verify" component={Verification} />
-      <PrivateRoute2 path="/login" component={Login}/>
-      <PrivateRoute2 path="/signup" component={Signup}/>
-      <PrivateRoute path="/home" component={Home}/>
-    </Switch>
+    <div>
+      {/*header here*/}
+      <Header user='' logined='false'/>
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route exact path="/verify/:token" component={Verified} />
+        <Route exact path="/verify" component={Verification} />
+        <PrivateRoute2 path="/login" component={Login}/>
+        <PrivateRoute2 path="/signup" component={Signup}/>
+        <PrivateRoute path="/home" component={Home}/>
+      </Switch>
+    </div>
   </Router>
 )
 
