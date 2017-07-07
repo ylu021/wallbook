@@ -4,7 +4,11 @@ const nodemailer = require('nodemailer')
 require('dotenv').load()
 
 const algorithm = 'aes-256-ctr'
-const privateKey = process.env.PRIVATEKEY // randomly generated
+const privateKey = crypto.randomBytes(32).toString('hex') // onetime private key for password
+
+module.exports.generateKey = ()=> {
+    return crypto.randomBytes(32).toString('hex')
+} 
 
 module.exports.decrypt = (password) => {
     const decipher = crypto.createDecipher(algorithm, privateKey)
@@ -20,15 +24,23 @@ module.exports.encrypt = (password) => {
     return crypted
 }
 
-module.exports.jwt = (userdata) => {
-    return Jwt.sign(userdata, privateKey, {
+module.exports.jwtSign = (userdata, key) => {
+    return Jwt.sign(userdata, key, {
         expiresIn : '24h' 
     })
 }
 
+module.exports.jwtVerify = (token, key) => {
+    return Jwt.verify(token, key)
+}
+
+module.exports.jwtDecode = (token) => {
+    return Jwt.decode(token)
+}
+
 module.exports.sendEmailConfirmation = (email, token) => {
-    const {GOOGLECLIENTID, GOOGLECLIENTSECRET, GOOGLEREFRESHTOKEN} = process.env
-    console.log(GOOGLECLIENTID,GOOGLECLIENTSECRET,GOOGLEREFRESHTOKEN)
+    const {GOOGLECLIENTID, GOOGLECLIENTSECRET, GOOGLEREFRESHTOKEN, DCLIENT} = process.env
+    console.log(GOOGLECLIENTID,GOOGLECLIENTSECRET, GOOGLEREFRESHTOKEN)
     const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         port: 465,
@@ -40,7 +52,7 @@ module.exports.sendEmailConfirmation = (email, token) => {
         }
     })
 
-    const link = `http://localhost:3000/signup/?auth=${token}`
+    const link = DCLIENT+`/verify/${token}`
 
     const mailOptions = {
         auth: {

@@ -1,10 +1,19 @@
 // import db from './db'
 const { pool, pquery } = require('./db')
+const redis = require('redis')
+var bluebird = require('bluebird')
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const port = 8080
-const { encrypt, decrypt, jwt, sendEmailConfirmation } = require('./auth')
+const { encrypt, decrypt, jwtSign, jwtVerify, jwtDecode, generateKey, sendEmailConfirmation } = require('./auth')
+
+// create global async redis client
+bluebird.promisifyAll(redis.RedisClient.prototype)
+const redisClient = redis.createClient()
+redisClient.on('error', (err) => {
+  console.error(`Error ${err}`) 
+})
 
 // process request body json
 app.use(bodyParser.json())
@@ -24,6 +33,7 @@ app.get('/api/users', (req, res, next) => {
   })().catch(next)
 })
 
+// signup
 app.post('/api/users', (req, res, next) => {
   (async() => {
     const { email, password } = req.body
@@ -50,6 +60,7 @@ app.post('/api/users', (req, res, next) => {
   })().catch(next)
 })
 
+// avatar creation and email verification
 app.put('/api/users', (req, res, next) => {
   (async() => {
     const { email, avatar, username } = req.body
@@ -57,7 +68,7 @@ app.put('/api/users', (req, res, next) => {
     const query = pquery.bind(client)
 
     let added = false
-    let emailsent = false
+    let emailSent = false
     const exist = await query('SELECT * FROM Users WHERE email = $1', [email])
     const usernameExist = await query('SELECT * FROM Users WHERE username = $1', [username])
     // email exist valid user and username does not exist
@@ -75,14 +86,19 @@ app.put('/api/users', (req, res, next) => {
         const userData = {
           id: id,
           email: email,
-          username: username
+          username: username,
+          password: exist.rows[0].password
         }
         // jwt token
-        const token = jwt(userData) 
+        const key = generateKey()
+        const setted = await redisClient.setex(`${username}:jwtkey`, 60*5, key) // k-v (username:token-token) expire in 5 minutes
+        console.log('set', setted)
+        const token = jwtSign(userData, key) 
+        
         // send email nodemailer
         try {
           const success = await sendEmailConfirmation(email, token)
-          emailsent = true
+          emailSent = true
         } catch(e) {
           console.error(e)
         }
@@ -91,48 +107,103 @@ app.put('/api/users', (req, res, next) => {
     client.release()
     res.json({
       added: added,
-      emailsent: emailsent
+      emailSent: emailSent
+
     })
   })().catch(next)
 })
 
+// email verification alone
+app.get('/api/email/:email', (req, res, next) => {
+  (async() => {
+    const { email } = req.params
+    const client = await pool.connect()
+    const query = pquery.bind(client)
+    let emailSent = false
+    // check existing account
+    const result = await query('SELECT * FROM Users WHERE email = $1 and active= $2', [email, false])
+    if(result.rowCount>0) {
+      // account exist
+      const { id, email, password, username } = result.rows[0]
+      const key = generateKey()
+      const token = await jwtSign({
+        id,
+        email,
+        password,
+        username
+      }, key)
+      // new key
+      redisClient.setex(`${username}:jwtkey`, 60*5, key) // k-v (username:token-token) expire in 5 minutes
+
+      // send email
+      try {
+          const success = await sendEmailConfirmation(email, token)
+          emailSent = true
+      } catch(e) {
+        console.error(e)
+      }
+    }
+
+    client.release()
+    res.json({
+      emailSent: emailSent
+    })
+  // })().catch(e => console.error(e.stack))
+  })().catch(next)
+})
+
+app.put('/api/verify', (req, res, next) => {
+  (async() => {
+    const client = await pool.connect()
+    const query = pquery.bind(client)
+    const { token } = req.body
+    let isVerified = false
+    const { username } = jwtDecode(token)
+    try {
+      const key = await redisClient.getAsync(`${username}:jwtkey`)
+      console.log(`key ${key}, token ${token}`)
+      let decoded = jwtVerify(token, key)
+      if(decoded) {
+        isVerified = true
+        // set database to true
+        await query('UPDATE Users set active=$1 WHERE username=$2', [true, username])
+        // remove the key
+        redisClient.del(`${username}:jwtkey`)
+      }
+    } catch (e) {
+      console.error('expired', e.stack)
+    }
+
+    console.log('verified?', isVerified)
+    client.release()
+    res.json({isVerified: isVerified})
+  })().catch(next)
+})
+// app.post('/api/email/verify'), (req, res, next) => {
+//     console.log('verify account first time hello')
+//     let isVerified = false
+//   // (async() => {
+//   //   console.log('verify account first time', token, emailKey)
+
+//   //   const isVerified = false
+//   //   const { token } = req.body
+    // try {
+    //   const decoded = await jwtVerify(token, emailKey)
+    //   if(decoded.email) {
+    //     console.log('isVerified')
+    //     isVerified = true
+    //   }
+    // }catch (e) {
+    //   throw e
+    // }
+    // client.release()
+//     res.json({
+//       isVerified: isVerified
+//     })
+//   //   // console.log('the first one should expire and not working')
+//   // })().catch(e => console.error(e.stack))
+// }
+
 app.listen(port, () => {
   console.log('server is listening on ', port)
 })
-
-const insertquery = async () => {
-  // await a client
-  const client = await pool.connect()
-  const query = pquery.bind(client) // changing this context
-
-  try {
-    await query('BEGIN')
-    await client.query('CREATE TABLE IF NOT EXISTS Users (id serial primary key, username varchar(60), password varchar(60))')
-    await client.query('INSERT INTO Users (username, password) VALUES ($1, $2)',['wallbook_testing', 'root'])
-    await query('COMMIT')
-  } catch(e) {
-    await query('ROLLBACK')
-    throw e
-  } finally {
-    client.release()
-    console.log('calling end')
-    await pool.end()
-    console.log('pool has drained')
-  }
-}
-
-// insertquery().catch( e => console.error(e.stack))
-
-// pool.connect((err, client, done) => {
-//   if (err) throw err
-//   client.query('SELECT * FROM users', (err, res) => {
-//     done()
-//
-//     if(err) {
-//       console.error(err.stack)
-//     }else {
-//       console.log(res)
-//     }
-//   })
-//
-// })
