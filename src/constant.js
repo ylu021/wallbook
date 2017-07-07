@@ -29,4 +29,6 @@ export const lastName = new Array(
 export default {
   ADD_USER: 'ADD_USER',
   ADD_AVATAR: 'ADD_AVATAR',
+  SEND_EMAIL: 'SEND_EMAIL',
+  VERIFY_EMAIL: 'VERIFY_EMAIL'
 }

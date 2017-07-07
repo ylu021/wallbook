@@ -5,6 +5,10 @@ const initialState = {
   error: false,
   added: false,
   done: false,
+  emailSent: false,
+  isSending: false,
+  isVerfied: false,
+  isVerifying: false
 }
 export default(state = initialState, action) => {
   switch(action.type) {
@@ -31,14 +35,17 @@ export default(state = initialState, action) => {
     case `${types.ADD_AVATAR}_LOADING`:
       console.log('loading')
       return {
+        ...state,
         addedAvatar: false,
         isAdding: true,
         done: false
       }
     case `${types.ADD_AVATAR}_SUCCESS`:
       return {
+        ...state,
         added: true,
         addedAvatar: action.payload.added,
+        emailSent: action.payload.emailSent,
         isAdding: false,
         done: true
       }
@@ -46,6 +53,41 @@ export default(state = initialState, action) => {
       return {
         error: action.payload,
         isAdding: false,
+        done: false
+      }
+    case `${types.SEND_EMAIL}_LOADING`:
+      return {
+        ...state,
+        isSending: true,
+        done: false
+      }
+    case `${types.SEND_EMAIL}_SUCCESS`:
+      return {
+        ...state,
+        emailSent: action.payload.emailSent,
+        isSending: false,
+        done: true
+      }
+    case `${types.SEND_EMAIL}_ERROR`:
+      return {
+        error: action.payload,
+        isSending: false,
+        done: false
+      }
+    case `${types.VERIFY_EMAIL}_LOADING`:
+      return {
+        done: false,
+        isVerifying: true
+      }
+    case `${types.VERIFY_EMAIL}_SUCCESS`:
+      return {
+        isVerified: action.payload.isVerified,
+        isVerifying: false,
+        done: true
+      }
+    case `${types.VERIFY_EMAIL}_ERROR`:
+      return {
+        error: action.payload,
         done: false
       }
     default:

@@ -14,21 +14,41 @@ import * as api from '../api'
 // }
 
 export const addUser = (user) => {
-    return {
-      type: types.ADD_USER,
-      payload: {
-        promise: api.addUser(user),
-        added: user // optimal update added user
-      }
+  return {
+    type: types.ADD_USER,
+    payload: {
+      promise: api.addUser(user),
+      added: user // optimal update added user
     }
+  }
 }
 
 export const addAvatar = (user) => {
-    return {
-      type: types.ADD_AVATAR,
-      payload: {
-        promise: api.addAvatar(user),
-        addedAvatar: user // optimal update added user
-      }
+  return {
+    type: types.ADD_AVATAR,
+    payload: {
+      promise: api.addAvatar(user),
+      addedAvatar: user // optimal update added user
     }
+  }
+}
+
+export const sendEmail = (email) => {
+  return {
+    type: types.SEND_EMAIL,
+    payload: {
+      promise: api.sendEmail(email),
+      emailSent: true // optimal update added user
+    }
+  }
+}
+
+export const verifyEmail = (token) => {
+  return {
+    type: types.VERIFY_EMAIL,
+    payload: {
+      promise: api.verifyEmail(token),
+      isVerified: true // optimal update added user
+    }
+  }
 }
