@@ -83,7 +83,6 @@ export const validateForm = (formtype, state, cb) => {
     formErrors['passwordc'] = false
   }
   const passwordcCheck = 'passwordc' in formErrors? state.passwordc : true
-  //console.log(formErrors, typeof(formErrors['passwordc'])==='undefined')
   if(state.email && state.password && passwordcCheck) {
     return cb(_.isEqual(formErrors, state.formErrors))
   }

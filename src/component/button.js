@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { Button } from 'reactstrap'
 
 let CusButton = (props) => {
   const {children, ...others} = props
@@ -12,13 +13,16 @@ let CusButton = (props) => {
 }
 
 const StyledButton = styled.button`
-  &:hover {
-    opacity: 0.8;
-  }
+  // &:hover {
+  //   opacity: 0.8;
+  // }
   cursor: pointer;
-  display: inline-block;
+  // display: inline-block;
   border: none;
-  background-color: ${props => props.color? props.color : '#9B9B9B' };
+  // background-color: ${props => props.color? props.color : '#9B9B9B' };
+  background-color: ${props => props.disabled? '#f6f6f6' : 
+    (props.color? props.color : '#9B9B9B')
+  }};
   color: white;
   padding: .78571429em 1.5em .78571429em;
   font-weight: 500;
@@ -27,8 +31,8 @@ const StyledButton = styled.button`
   font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
   text-align: center;
   border-radius: 5px;
-  -webkit-transition: opacity .1s ease,background-color .1s ease,color .1s ease,box-shadow .1s ease,background .1s ease;
-  transition: opacity .1s ease,background-color .1s ease,color .1s ease,box-shadow .1s ease,background .1s ease;
+  // -webkit-transition: opacity .1s ease,background-color .1s ease,color .1s ease,box-shadow .1s ease,background .1s ease;
+  // transition: opacity .1s ease,background-color .1s ease,color .1s ease,box-shadow .1s ease,background .1s ease;
 `
 
 CusButton.PropTypes = {
