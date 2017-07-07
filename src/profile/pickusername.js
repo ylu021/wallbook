@@ -8,6 +8,7 @@ import CusButton from '../component/button'
 import Verification from '../verification'
 import { H2, InfoTitle } from '../component/title'
 import { BorderlessInput } from '../component/input'
+import Loading from '../component/loading'
 import { CusForm, FormRow, validateField, validateForm } from '../component/form'
 import _ from 'lodash'
 import { avatars, firstName, lastName } from '../constant'
@@ -71,8 +72,13 @@ class PickUsername extends Component {
   }
 
   render() {
-    const { email } = this.props
-    if(this.props.done && this.props.addedAvatar) {
+    const { email, isSending, isAdding, done, addedAvatar } = this.props
+    if(isSending || isAdding) {
+      return (
+        <Loading />
+      )
+    }
+    if(done && addedAvatar) {
       return (
         <Verification email={email} />
       )
@@ -177,6 +183,7 @@ const mapStateToProps = (state, props) => {
     addedAvatar: state.users.addedAvatar,
     done: state.users.done,
     isAdding: state.users.isAdding,
+    isSending: state.users.isSending,
     error: state.users.error
   }
 }
