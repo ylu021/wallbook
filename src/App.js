@@ -7,14 +7,14 @@ import {
   BrowserRouter as Router,
 } from 'react-router-dom'
 
-class App extends Component {
-  render() {
-    return (
+function App(props) {
+  console.log(props.children)
+  return (
       <div className="App">
-        {this.props.children}
+        <Header user='' logined={false}/>
+        {React.Children.toArray(props.children)}
       </div>
-    )
-  }
+  )
 }
 
 export default App
