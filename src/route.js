@@ -38,14 +38,14 @@ export const Routes = (props) => (
 
 export const fakeAuth = {
   isAuthenticated: localStorage.getItem('auth') || false,
-  authenticate(cb) {
+  authenticate(token, cb) {
     this.isAuthenticated = true
-    localStorage.setItem('auth', true)
+    sessionStorage.setItem('auth', token)
     setTimeout(cb, 100) // fake async
   },
   signout(cb) {
     this.isAuthenticated = false
-    localStorage.clear()
+    sessionStorage.clear()
     setTimeout(cb, 100) // fake async
   }
 }
