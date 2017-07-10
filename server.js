@@ -1,12 +1,13 @@
 // import db from './db'
 const { pool, pquery } = require('./db')
 const redis = require('redis')
-var bluebird = require('bluebird')
+const bluebird = require('bluebird')
+const passport = require('passport')
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const port = 8080
-const { encrypt, decrypt, jwtSign, jwtVerify, jwtDecode, generateKey, sendEmailConfirmation } = require('./auth')
+const { encrypt, decrypt, jwtSign, jwtSignLogined, jwtVerify, jwtDecode, generateKey, sendEmailConfirmation } = require('./auth')
 
 // create global async redis client
 bluebird.promisifyAll(redis.RedisClient.prototype)
@@ -15,7 +16,10 @@ redisClient.on('error', (err) => {
   console.error(`Error ${err}`) 
 })
 
-// process request body json
+// initialize Passport middleware
+app.use(passport.initialize())
+
+// process request body json and form
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -203,6 +207,38 @@ app.put('/api/verify', (req, res, next) => {
 //   //   // console.log('the first one should expire and not working')
 //   // })().catch(e => console.error(e.stack))
 // }
+
+app.post('/api/login', (req, res, next) => {
+  (async() => {
+    const { email, password } = req.body
+    console.log(req.body)
+    const client = await pool.connect()
+    const query = pquery.bind(client)
+
+    let logined = false // check dup
+    const exist = await query('SELECT * FROM Users WHERE email = $1', [email])
+    if(exist.rowCount!==1){
+      res.status(403).json({message: 'No user found'})
+    } 
+    if(exist.rowCount===1 && password === decrypt(exist.rows[0].password)) {
+      // account verified and logined
+      if(!exist.rows[0].active) {
+        res.status(401).json({message: 'You account is not verified'})
+      }else {
+        let payload = {
+          id: exist.rows[0].id
+        }
+        let token = await jwtSignLogined(payload)
+
+        res.json({logined: true, token: token})
+
+      }
+    }else {
+      res.status(403).json({message: 'Wrong password'})
+    }
+    client.release()
+  })().catch(next)
+})
 
 app.listen(port, () => {
   console.log('server is listening on ', port)

@@ -7,6 +7,7 @@ import {fakeAuth} from "./route";
 import CusButton from './component/button'
 import { CusForm, FormRow, validateField, validateForm } from './component/form'
 import Loading from './component/loading'
+import Span from './component/span'
 import _ from 'lodash'
 import styled from 'styled-components'
 import { bindActionCreators } from 'redux'
@@ -123,10 +124,10 @@ export const FormWrapper = styled.div`
   background: white;
 `
 
-const Span = styled.span`
-  font-size: 1.8rem;
-  color: coral;
-`
+// const Span = styled.span`
+//   font-size: 1.8rem;
+//   color: coral;
+// `
 
 export const Section = styled.section`
   padding-top: 15%;

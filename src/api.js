@@ -50,3 +50,16 @@ export async function verifyEmail(token) {
   console.log(data)
   return data
 }
+
+export async function loginUser(user) {
+  console.log('data', user)
+  let response = await fetch('/api/login', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(user)
+  })
+  let data = await response.json()
+  console.log(data)
+  // convert stringify to json using parse, this is a shortcut
+  return data
+}

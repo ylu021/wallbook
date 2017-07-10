@@ -52,3 +52,13 @@ export const verifyEmail = (token) => {
     }
   }
 }
+
+export const loginUser = (user) => {
+  return {
+    type: types.LOGIN_USER,
+    payload: {
+      promise: api.loginUser(user),
+      logined: true // optimal login user
+    }
+  }
+}

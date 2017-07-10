@@ -4,10 +4,17 @@ const nodemailer = require('nodemailer')
 require('dotenv').load()
 
 const algorithm = 'aes-256-ctr'
-const privateKey = crypto.randomBytes(32).toString('hex') // onetime private key for password
+const privateKey = process.env.PRIVATEKEY // onetime private key for password
 
 module.exports.generateKey = ()=> {
     return crypto.randomBytes(32).toString('hex')
+}
+
+module.exports.encrypt = (password) => {
+    const cipher = crypto.createCipher(algorithm, privateKey)
+    var crypted = cipher.update(password, 'utf8', 'hex')
+    crypted += cipher.final('hex')
+    return crypted
 } 
 
 module.exports.decrypt = (password) => {
@@ -17,17 +24,14 @@ module.exports.decrypt = (password) => {
     return dec
 }
 
-module.exports.encrypt = (password) => {
-    const cipher = crypto.createCipher(algorithm, privateKey)
-    var crypted = cipher.update(password, 'utf8', 'hex')
-    crypted += cipher.final('hex')
-    return crypted
-}
-
 module.exports.jwtSign = (userdata, key) => {
     return Jwt.sign(userdata, key, {
         expiresIn : '24h' 
     })
+}
+
+module.exports.jwtSignLogined = (userdata) => {
+    return Jwt.sign(userdata, privateKey)
 }
 
 module.exports.jwtVerify = (token, key) => {

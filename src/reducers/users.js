@@ -8,12 +8,15 @@ const initialState = {
   emailSent: false,
   isSending: false,
   isVerfied: false,
-  isVerifying: false
+  isVerifying: false,
+  logined: false,
+  isLoggingin: false,
+  message: '',
+  verified: true
 }
 export default(state = initialState, action) => {
   switch(action.type) {
     case `${types.ADD_USER}_LOADING`:
-      console.log('loading')
       return {
         added: false,
         isAdding: true,
@@ -31,7 +34,6 @@ export default(state = initialState, action) => {
         isAdding: false,
         done: false
       }
-
     case `${types.ADD_AVATAR}_LOADING`:
       console.log('loading')
       return {
@@ -88,6 +90,27 @@ export default(state = initialState, action) => {
     case `${types.VERIFY_EMAIL}_ERROR`:
       return {
         error: action.payload,
+        done: false
+      }
+    case `${types.LOGIN_USER}_LOADING`:
+      return {
+        logined: false,
+        isLoggingin: true,
+        done: false,
+      }
+    case `${types.LOGIN_USER}_SUCCESS`:
+      return {
+        logined: action.payload.logined,
+        message: action.payload.message,
+        verified: action.payload.verified,
+        isLoggingin: false,
+        token: action.payload.token,
+        done: true
+      }
+    case `${types.LOGIN_USER}_ERROR`:
+      return {
+        error: action.payload,
+        isLoggingin: false,
         done: false
       }
     default:
