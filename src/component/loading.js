@@ -6,7 +6,7 @@ export default (props) => {
     return (
         <Wrapper>
             <BiggerTitle>
-                Loading
+                {props.text? props.text: 'Loading'}
                 <Span>.</Span><Span>.</Span><Span>.</Span>
             </BiggerTitle>
         </Wrapper>
