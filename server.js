@@ -230,7 +230,13 @@ app.post('/api/login', (req, res, next) => {
         }
         let token = await jwtSignLogined(payload)
 
-        res.json({logined: true, token: token})
+        res.json({
+          logined: true, 
+          user: {
+            token: token,
+            username: exist.rows[0].username
+          }
+        })
 
       }
     }else {

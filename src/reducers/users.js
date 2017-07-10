@@ -104,7 +104,7 @@ export default(state = initialState, action) => {
         message: action.payload.message,
         verified: action.payload.verified,
         isLoggingin: false,
-        token: action.payload.token,
+        user: action.payload.user,
         done: true
       }
     case `${types.LOGIN_USER}_ERROR`:

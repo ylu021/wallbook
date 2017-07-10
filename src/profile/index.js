@@ -4,12 +4,35 @@ import { Link } from 'react-router-dom'
 import { withRouter, Redirect } from 'react-router-dom'
 import { fakeAuth } from '../route';
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import * as Actions from '../actions/useraction'
 
 class Profile extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      username: ''
+    }
+  }
+
+  componentWillMount() {
+    // using token to load user info
+    const { username } = JSON.parse(sessionStorage.getItem('auth'))
+    if(username) {
+      this.setState({
+        username
+      })
+      this.props.actions.fetchUser(username)
+    }
+    
+  }
   render() {
+    const { username } = this.state
     return (
       <div className="profile">
-        { this.props.logined? <User /> : <LoginForm />}
+        <LoginForm username={username} />
       </div>
     )
   }
@@ -43,8 +66,9 @@ const BoldCusLink = CusLink.extend`
   font-weight: 500;
 `
 
-const LoginForm = withRouter(({ history }) => (
-  fakeAuth.isAuthenticated ? (
+/*const LoginForm = withRouter(({ history }) => {
+  return (
+    fakeAuth.isAuthenticated ? (
     <ProfileSection>
       <span>User logined</span>{' '}
       <BoldCusLink to='' onClick={
@@ -52,7 +76,7 @@ const LoginForm = withRouter(({ history }) => (
           localStorage.clear()
           history.push('/')
         }))
-      } bold>{'Sign Out'}</BoldCusLink>
+      }>{'Sign Out'}</BoldCusLink>
 
     </ProfileSection>
   ) : (
@@ -62,7 +86,52 @@ const LoginForm = withRouter(({ history }) => (
         <CusLink to={'/signup'}>{'Sign Up'}</CusLink>
 
     </ProfileSection>
+      )
   )
-))
+})*/
 
-export default Profile
+const LoginPreform = (props) => {
+  const { history } = props
+  const { username } = JSON.parse(sessionStorage.getItem('auth')) || ''
+  return(
+    fakeAuth.isAuthenticated ? (
+    <ProfileSection>
+      <span>{username}</span>{' '}
+      <BoldCusLink to='' onClick={
+        () => (fakeAuth.signout(() => {
+          localStorage.clear()
+          history.push('/')
+        }))
+      }>{'Sign Out'}</BoldCusLink>
+
+    </ProfileSection>
+  ) : (
+    <ProfileSection>
+
+        <BoldCusLink to={'/login'}>{'Log In'}</BoldCusLink>
+        <CusLink to={'/signup'}>{'Sign Up'}</CusLink>
+
+    </ProfileSection>
+      )
+  )
+}
+
+const LoginForm = withRouter(LoginPreform)
+
+const mapStateToProps = (state, props) => {
+    // state from store to props
+    console.log(state.users)
+  return {
+    user: state.users.user
+  }
+}
+
+const mapDispatchToProps = (dispatch) => (
+  // action from dispatch to store
+  {
+    actions: bindActionCreators(Actions, dispatch)
+  }
+)
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile)
+// export default Profile

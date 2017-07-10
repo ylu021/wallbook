@@ -70,13 +70,12 @@ class Login extends Component {
     const { from } = this.props.location.state || { from: { pathname: '/home' } }
     const { redirect } = this.state
     const {email, password} = this.state.formErrors
-    const { isLoggingin, error, logined, done, message, verified, token } = this.props
+    const { isLoggingin, error, logined, done, message, verified, user } = this.props
     if(isLoggingin) {
       return (<Loading text='Logging In' />)
     }
     if(logined) {
-      console.log('logined', token)
-      fakeAuth.authenticate(token, () => {
+      fakeAuth.authenticate(user, () => {
         console.log('authenticated')
       })
       return <Redirect to={ from } />
@@ -121,7 +120,7 @@ const mapStateToProps = (state, props) => {
     error: state.users.error,
     message: state.users.message,
     verified: state.users.verified,
-    token: state.users.token
+    user: state.users.user
   }
 }
 

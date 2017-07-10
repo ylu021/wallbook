@@ -1,6 +1,10 @@
-const headers = {
+let headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
+}
+
+const requestHeaders = {
+  'Authorization': `Bearer ${sessionStorage.getItem('Auth').token}`
 }
 
 export async function addUser(user) {
@@ -60,6 +64,10 @@ export async function loginUser(user) {
   })
   let data = await response.json()
   console.log(data)
+  if(response.status===401) {
+    // unauthorized, redirect to email verification page
+    data['verified'] = false
+  }
   // convert stringify to json using parse, this is a shortcut
   return data
 }
