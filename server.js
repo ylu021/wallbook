@@ -2,23 +2,49 @@
 const { pool, pquery } = require('./db')
 const redis = require('redis')
 const bluebird = require('bluebird')
+
 const passport = require('passport')
+const passportJWT = require('passport-jwt')
+const ExtractJwt = passportJWT.ExtractJwt
+const Strategy = passportJWT.Strategy
+
 const express = require('express')
-const app = express()
 const bodyParser = require('body-parser')
 const port = 8080
-const { encrypt, decrypt, jwtSign, jwtSignLogined, jwtVerify, jwtDecode, generateKey, sendEmailConfirmation } = require('./auth')
+const { passportAuth, encrypt, decrypt, jwtSign, jwtSignLogined, jwtVerify, jwtDecode, generateKey, sendEmailConfirmation } = require('./auth')
 
 // create global async redis client
 bluebird.promisifyAll(redis.RedisClient.prototype)
 const redisClient = redis.createClient()
 redisClient.on('error', (err) => {
-  console.error(`Error ${err}`) 
+  console.error(`Error ${err}`)
 })
 
-// initialize Passport middleware
-app.use(passport.initialize())
-
+// // initialize Passport middleware and accepting a promise
+// let jwtOptions = {
+//   secretOrKey: getPrivateKey(),
+//   jwtFromRequest: ExtractJwt.fromAuthHeader()
+// }
+// const strategy = new Strategy(jwtOptions, (payload, done) => {
+//   console.log('payload received', payload)
+//   (async() => {
+//   //   // look for the user inside database
+//     const client = await pool.connect()
+//     const query = pquery.bind(client)
+//     const res = await query('SELECT * FROM Users WHERE id = $1',[payload.id])
+//     // console.log(res)
+//     if(res.rowCount>0) {
+//       return done(null, {id: res.rows[0].id})
+//     }else {
+//       return done(null, false)
+//     }
+//     client.release()
+//   })().catch(e)
+// })
+// console.log(strategy)
+// passport.use(strategy)
+const app = express()
+app.use(passportAuth().initialize())
 // process request body json and form
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -27,14 +53,19 @@ app.get('/', (req, res) => {
   res.send('hello from express!')
 })
 
-app.get('/api/users', (req, res, next) => {
-  (async() => {
-    const client = await pool.connect()
-    const query = pquery.bind(client)
-    const result = await query('SELECT * FROM Users')
-    client.release()
-    res.json(result.rows)
-  })().catch(next)
+// app.get('/api/user', (req, res, next) => {
+//   passport.authenticate('jwt', (jreq, jres, jnext) => {
+//       res.json({fetched: jres, id: req.get('Authorization')})
+//   })(req, res, next)
+// })
+
+app.get('/api/user', passportAuth().authenticate(), (req, res, next) => {
+  let fetched = false
+  if(req.get('Authorization')) {
+    res.json({user: req.user.details })
+  } else {
+    res.status(401).json({user: {}})
+  }
 })
 
 // signup
@@ -97,8 +128,8 @@ app.put('/api/users', (req, res, next) => {
         const key = generateKey()
         const setted = await redisClient.setex(`${username}:jwtkey`, 60*5, key) // k-v (username:token-token) expire in 5 minutes
         console.log('set', setted)
-        const token = jwtSign(userData, key) 
-        
+        const token = jwtSign(userData, key)
+
         // send email nodemailer
         try {
           const success = await sendEmailConfirmation(email, token)
@@ -219,7 +250,7 @@ app.post('/api/login', (req, res, next) => {
     const exist = await query('SELECT * FROM Users WHERE email = $1', [email])
     if(exist.rowCount!==1){
       res.status(403).json({message: 'No user found'})
-    } 
+    }
     if(exist.rowCount===1 && password === decrypt(exist.rows[0].password)) {
       // account verified and logined
       if(!exist.rows[0].active) {
@@ -231,7 +262,7 @@ app.post('/api/login', (req, res, next) => {
         let token = await jwtSignLogined(payload)
 
         res.json({
-          logined: true, 
+          logined: true,
           user: {
             token: token,
             username: exist.rows[0].username
