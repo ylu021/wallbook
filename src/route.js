@@ -15,10 +15,12 @@ import Verification from './verification'
 import Loading from './component/loading'
 import Verified from './verification/confirmation'
 
+let user = {}
+
 export const Routes = (props) => (
   <Router {...props}>
     <div>
-      <Header/>
+      <Header user={fakeAuth.isAuthenticated}/>
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/verify/:token" component={Verified} />
@@ -32,20 +34,26 @@ export const Routes = (props) => (
 )
 
 export const fakeAuth = {
-  isAuthenticated: sessionStorage.getItem('auth')? true : false,
+  isAuthenticated: !!sessionStorage.getItem('auth'),
   authenticate(user, cb) {
     this.isAuthenticated = true
+    this.user = user
     sessionStorage.setItem('auth', JSON.stringify(user))
     console.log('inside authenticate')
-    setTimeout(cb, 100) // fake async
+    // setTimeout(cb, 100) // fake async
+    cb()
+
   },
   signout(cb) {
     this.isAuthenticated = false
     sessionStorage.clear()
     console.log('inside signout')
-    setTimeout(cb, 100) // fake async
+    // setTimeout(cb, 100) // fake async
+    cb()
   }
 }
+
+console.log(!!sessionStorage.getItem('auth'))
 
 const PrivateRoute = ({component: Component, ...rest }) => (
   <Route {...rest} render={ props => (

@@ -58,16 +58,9 @@ class Login extends Component {
         password
       })
     }
-    // fakeAuth.authenticate(() => {
-    //   if('redirect' in this.state) {
-    //     this.setState({
-    //       redirect: true,
-    //     })
-    //   }
-    // })
   }
   render() {
-    const { from } = this.props.location.state || { from: { pathname: '/home' } }
+    let { from } = this.props.location.state || { from: { pathname: '/' } }
     const { redirect } = this.state
     const {email, password} = this.state.formErrors
     const { isLoggingin, error, logined, done, message, verified, user } = this.props
@@ -75,10 +68,11 @@ class Login extends Component {
       return (<Loading text='Logging In' />)
     }
     if(logined) {
-      fakeAuth.authenticate(user, () => {
-        // console.log('redirecting to', fakeAuth.isAuthenticated)
+      console.log('im moving on', sessionStorage)
+      fakeAuth.authenticate(user, ()=> {
+
       })
-      return <Redirect to={ from } />
+      return <Redirect to={'/'} />
     }
     else {
       return (

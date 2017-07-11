@@ -23,6 +23,7 @@ class Home extends Component {
     }
   }
   render() {
+    console.log(this.props.location.state)
     if(sessionStorage.getItem('auth')!==null) {
       // user
       console.log('logined')

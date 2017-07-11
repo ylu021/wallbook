@@ -8,12 +8,6 @@ import { Provider } from 'react-redux'
 import Store from './store'
 import { Routes } from './route';
 
-// ReactDOM.render(
-//   <Routes>
-//     <App/>
-//   </Routes>
-//   , document.getElementById('root'));
-
 const storeInstance = Store()
 
 ReactDOM.render(

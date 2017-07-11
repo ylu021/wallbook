@@ -3,9 +3,11 @@ let headers = {
       'Content-Type': 'application/json'
 }
 
-const requestHeaders = sessionStorage.getItem('auth')? {
-  'Authorization': `JWT ${JSON.parse(sessionStorage.getItem('auth')).token}`
-}: {}
+const requestHeaders = () => {
+  return sessionStorage.getItem('auth')? {
+    'Authorization': `JWT ${JSON.parse(sessionStorage.getItem('auth')).token}`
+  }: {}
+}
 
 export async function addUser(user) {
   let response = await fetch('api/users', {
@@ -75,13 +77,12 @@ export async function loginUser(user) {
 export async function fetchUser() {
   let response = await fetch('/api/user', {
     method: 'GET',
-    headers: {...headers, ...requestHeaders}
+    headers: {...headers, ...requestHeaders()}
   })
   let data = await response.json()
   if(response.status===401) {
     // unauthorized, redirect to email verification page
     data['fetched'] = false
   }
-  console.log(response)
   return data
 }
