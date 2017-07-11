@@ -47,12 +47,9 @@ class Profile extends Component {
         logined ? (
           <div>
             <ProfileSection className={'d-flex'}>
-              <CusButton color='#fe7aa5' size={'small'} onClick={this.post}>Post on wall</CusButton>
+              <FeedForm />
               <User user={user} />
             </ProfileSection>
-            <div>
-              {this.state.showPostForm? (<FeedForm />) : null }
-            </div>
           </div>
         ) : (
           <ProfileSection>
