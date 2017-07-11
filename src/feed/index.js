@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import FeedStatus from './feed_status'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
+import { ProfileImg, Img } from '../component/usercomponent'
 
 const Card = styled.div`
   background: white;
@@ -43,22 +44,6 @@ const FeedDate = styled.span`
   margin-left: 1rem;
   color: #9B9B9B;
   font-size: 1.2rem;
-`
-
-export const ProfileImg = styled.div`
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  border: 1px solid #F1F0F0;
-  position: relative;
-  overflow: hidden;
-`
-
-export const Img = styled.img`
-  width: 100%;
-  height: auto;
-  display: inline;
-  margin: 0 auto;
 `
 
 const FeedHeader = (props) => {

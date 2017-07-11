@@ -17,17 +17,17 @@ const StyledButton = styled.button`
   //   opacity: 0.8;
   // }
   cursor: pointer;
-  // display: inline-block;
   border: none;
-  // background-color: ${props => props.color? props.color : '#9B9B9B' };
-  background-color: ${props => props.disabled? '#f6f6f6' : 
+  background-color: ${props => props.disabled? '#f6f6f6' :
     (props.color? props.color : '#9B9B9B')
   }};
   color: white;
   padding: .78571429em 1.5em .78571429em;
   font-weight: 500;
   line-height: 1;
-  font-size: 1.6rem;
+  font-size: ${
+    props => props.size==='small'? '1.4rem' : '1.6rem'
+  };
   font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
   text-align: center;
   border-radius: 5px;

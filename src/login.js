@@ -54,7 +54,7 @@ class Login extends Component {
     if(formValid && !emailerr && !passworderr) {
       console.log('calling')
       this.props.actions.loginUser({
-        email, 
+        email,
         password
       })
     }
@@ -76,7 +76,7 @@ class Login extends Component {
     }
     if(logined) {
       fakeAuth.authenticate(user, () => {
-        console.log('authenticated')
+        // console.log('redirecting to', fakeAuth.isAuthenticated)
       })
       return <Redirect to={ from } />
     }
@@ -95,7 +95,7 @@ class Login extends Component {
                     <div className='mt-2'>
                       {message? (
                         <Span>
-                          {message+' '}  
+                          {message+' '}
                           {!verified? (<Link to='/verify'>verify here</Link>): null}
                         </Span>) : null}
                     </div>
@@ -105,7 +105,7 @@ class Login extends Component {
             </section>
           </StyledContent>
         </div>
-      ) 
+      )
     }
   }
 }

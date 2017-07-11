@@ -23,16 +23,13 @@ class Home extends Component {
     }
   }
   render() {
-    // console.log('hello', localStorage.getItem('auth'))
-    // this needs to be cached
-    if(localStorage.getItem('auth')!==null) {
+    if(sessionStorage.getItem('auth')!==null) {
       // user
+      console.log('logined')
       return (
         <div>
-          {/*<Header user="" logined={true}/>*/}
           <StyledContent>
             <Trending topics={this.state.topics} />
-            <p>Welcome user XXX</p>
             <Feed/>
           </StyledContent>
         </div>
@@ -41,7 +38,6 @@ class Home extends Component {
 
     return (
       <div>
-        {/*<Header user="" logined={false}/>*/}
         <StyledContent>
           <Trending topics={this.state.topics} />
           <Feed/>
