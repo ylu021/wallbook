@@ -5,57 +5,72 @@ import { Link } from 'react-router-dom'
 import { withRouter, Redirect } from 'react-router-dom'
 import { fakeAuth } from '../route';
 import styled from 'styled-components'
+import { Nav, NavItem } from 'reactstrap'
+import FeedForm from '../feed/feed_form'
+
 import PropTypes from 'prop-types'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as Actions from '../actions/useraction'
 import ReactDOM from 'react-dom'
+import _ from 'lodash'
 
 class Profile extends Component {
   constructor(props) {
     super(props)
     this.state = {
       username: '',
-      logined: !!sessionStorage.getItem('auth')
+      logined: !!sessionStorage.getItem('auth'),
+      showPostForm: false
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // using token to load user info
-    if(sessionStorage.getItem('auth')) {
-      const { username } = JSON.parse(sessionStorage.getItem('auth'))
-      this.setState({
-        username
-      })
-      this.props.actions.fetchUser()
-    }
+    this.props.actions.fetchUser()
+  }
+
+  post = () => {
+    this.setState({
+      showPostForm: true
+    })
   }
 
   render() {
     const { user, fetched, logined } = this.props
     console.log('inside profile', this.props)
+    if(logined && Object.keys(user).length===0) {
+      // end up calling fetch inside render
+      this.props.actions.fetchUser()
+    }
     return (
-      logined ? (
-        <ProfileSection>
-          <User user={user} />
-        </ProfileSection>
-      ) : (
-        <ProfileSection>
-
-            <BoldCusLink to={'/login'}>{'Log In'}</BoldCusLink>
-            <CusLink to={'/signup'}>{'Sign Up'}</CusLink>
-
-        </ProfileSection>
-      )
+        logined ? (
+          <div>
+            <ProfileSection className={'d-flex'}>
+              <CusButton color='#fe7aa5' size={'small'} onClick={this.post}>Post on wall</CusButton>
+              <User user={user} />
+            </ProfileSection>
+            <div>
+              {this.state.showPostForm? (<FeedForm />) : null }
+            </div>
+          </div>
+        ) : (
+          <ProfileSection>
+              <BoldCusLink to={'/login'}>{'Log In'}</BoldCusLink>
+              <CusLink to={'/signup'}>{'Sign Up'}</CusLink>
+          </ProfileSection>
+        )
     )
   }
 }
 
 const ProfileSection = (props) => {
+  const className = 'pl-2 my-auto '+props.className
   return (
-    <div>
-      {props.children}
-    </div>)
+    <div className={ className }>
+      { props.children }
+    </div>
+    )
 }
 
 const Fixed = styled.div`
@@ -127,7 +142,7 @@ class UserPre extends Component {
             <div className='d-flex'>
               <BoldCusLink to='' onClick={
                 () => (fakeAuth.signout(() => {
-                  this.props.history.push('/')
+                  return <Redirect to={'/'} />
                 }))
               }>{'Sign Out'}</BoldCusLink>
             </div>
@@ -160,7 +175,7 @@ const BoldCusLink = CusLink.extend`
 
 const mapStateToProps = (state, props) => {
     // state from store to props
-    console.log(state.sessions)
+    console.log('sessions', state.sessions)
   return {
     fetched: state.sessions.fetched,
     user: state.sessions.user
