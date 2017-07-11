@@ -12,7 +12,7 @@ import Loading from '../component/loading'
 import { CusForm, FormRow, validateField, validateForm } from '../component/form'
 import _ from 'lodash'
 import { avatars, firstName, lastName } from '../constant'
-import { ProfileImg } from '../feed'
+import { ProfileImg } from '../component/usercomponent'
 import { Redirect } from 'react-router-dom'
 
 const getRandomName = () => _.sample(firstName)+_.sample(lastName)
@@ -98,11 +98,11 @@ class PickUsername extends Component {
                   return <AvatarSelector active={active} img={avatar} key={idx} onClick={this.pickAvatar} />
                 })}</div>
                 <CusForm className='text-center'>
-                  <BorderlessInput 
-                    placeholder={''} 
-                    name='username' 
+                  <BorderlessInput
+                    placeholder={''}
+                    name='username'
                     inputtype='text'
-                    onChange={this.handleInput} 
+                    onChange={this.handleInput}
                     value={this.state.username}
                     inputRef={input => this.inputUsername = input }
                   />

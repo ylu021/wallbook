@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import CusButton from '../component/button'
+import { ProfileImg, Img } from '../component/usercomponent'
 import { Link } from 'react-router-dom'
 import { withRouter, Redirect } from 'react-router-dom'
 import { fakeAuth } from '../route';
@@ -8,32 +9,44 @@ import PropTypes from 'prop-types'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as Actions from '../actions/useraction'
+import ReactDOM from 'react-dom'
 
 class Profile extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      username: ''
+      username: '',
+      logined: !!sessionStorage.getItem('auth')
     }
   }
 
   componentWillMount() {
     // using token to load user info
-    const { username } = JSON.parse(sessionStorage.getItem('auth'))
-    if(username) {
+    if(sessionStorage.getItem('auth')) {
+      const { username } = JSON.parse(sessionStorage.getItem('auth'))
       this.setState({
         username
       })
-      this.props.actions.fetchUser(username)
+      this.props.actions.fetchUser()
     }
-    
   }
+
   render() {
-    const { username } = this.state
+    const { user, fetched, logined } = this.props
+    console.log('inside profile', this.props)
     return (
-      <div className="profile">
-        <LoginForm username={username} />
-      </div>
+      logined ? (
+        <ProfileSection>
+          <User user={user} />
+        </ProfileSection>
+      ) : (
+        <ProfileSection>
+
+            <BoldCusLink to={'/login'}>{'Log In'}</BoldCusLink>
+            <CusLink to={'/signup'}>{'Sign Up'}</CusLink>
+
+        </ProfileSection>
+      )
     )
   }
 }
@@ -45,14 +58,91 @@ const ProfileSection = (props) => {
     </div>)
 }
 
-class User extends Component {
+const Fixed = styled.div`
+  position: fixed;
+  background: white;
+  padding: 1rem 0;
+  border: 1px solid #EFF2F7;
+  border-radius: 5px;
+  right: 1.5rem;
+`
+
+const Span = styled.span`
+  font-size: 1.2rem;
+  padding: 3px 1.5rem;
+  color: rgba(0,0,0,.4);
+`
+
+const BoldSpan = Span.extend`
+  font-weight: 500;
+  font-size: 1.4rem;
+  color: inherit;
+`
+
+class UserPre extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      showOption: false
+    }
+  }
+  componentWillMount() {
+    document.addEventListener('click', this.hideOption, true)
+  }
+  componentWillUnmount() {
+    document.removeEventListener('click', this.hideOption, true)
+  }
+  showOption = () => {
+    this.setState({
+      showOption: true
+    })
+  }
+  hideOption = (e) => {
+    console.log('in here')
+    const domNode = ReactDOM.findDOMNode(this)
+    if(!domNode || !domNode.contains(e.target)) {
+      this.setState({
+        showOption: false
+      })
+    }
+  }
+
   render() {
+    const { showOption } = this.state
+    const { username, avatar, email } = this.props.user
     return (
       <ProfileSection>
-        <LoginForm />
+        {/* <CusButton color="#E5E9F2">Post on wall</CusButton> */}
+        <ProfileImg onMouseEnter={ this.showOption }>
+        {/* <ProfileImg> */}
+          <Img src={ avatar } />
+        </ProfileImg>
+        {showOption?
+          <Fixed>
+            <div className='d-flex flex-column'>
+              <BoldSpan>{ username }</BoldSpan>
+              <Span>{ email }</Span>
+            </div>
+            <div className='dropdown-divider'></div>
+            <div className='d-flex'>
+              <BoldCusLink to='' onClick={
+                () => (fakeAuth.signout(() => {
+                  this.props.history.push('/')
+                }))
+              }>{'Sign Out'}</BoldCusLink>
+            </div>
+          </Fixed>
+        : null}
+
       </ProfileSection>
     )
   }
+}
+
+const User = withRouter(UserPre)
+
+User.PropTypes = {
+  user: PropTypes.object.required
 }
 
 const CusLink = styled(Link)`
@@ -63,66 +153,17 @@ const CusLink = styled(Link)`
 `
 
 const BoldCusLink = CusLink.extend`
-  font-weight: 500;
+  font-weight: 600;
+  color: #FF0322;
+  padding: 3px 1.5rem;
 `
-
-/*const LoginForm = withRouter(({ history }) => {
-  return (
-    fakeAuth.isAuthenticated ? (
-    <ProfileSection>
-      <span>User logined</span>{' '}
-      <BoldCusLink to='' onClick={
-        () => (fakeAuth.signout(() => {
-          localStorage.clear()
-          history.push('/')
-        }))
-      }>{'Sign Out'}</BoldCusLink>
-
-    </ProfileSection>
-  ) : (
-    <ProfileSection>
-
-        <BoldCusLink to={'/login'}>{'Log In'}</BoldCusLink>
-        <CusLink to={'/signup'}>{'Sign Up'}</CusLink>
-
-    </ProfileSection>
-      )
-  )
-})*/
-
-const LoginPreform = (props) => {
-  const { history } = props
-  const { username } = JSON.parse(sessionStorage.getItem('auth')) || ''
-  return(
-    fakeAuth.isAuthenticated ? (
-    <ProfileSection>
-      <span>{username}</span>{' '}
-      <BoldCusLink to='' onClick={
-        () => (fakeAuth.signout(() => {
-          localStorage.clear()
-          history.push('/')
-        }))
-      }>{'Sign Out'}</BoldCusLink>
-
-    </ProfileSection>
-  ) : (
-    <ProfileSection>
-
-        <BoldCusLink to={'/login'}>{'Log In'}</BoldCusLink>
-        <CusLink to={'/signup'}>{'Sign Up'}</CusLink>
-
-    </ProfileSection>
-      )
-  )
-}
-
-const LoginForm = withRouter(LoginPreform)
 
 const mapStateToProps = (state, props) => {
     // state from store to props
-    console.log(state.users)
+    console.log(state.sessions)
   return {
-    user: state.users.user
+    fetched: state.sessions.fetched,
+    user: state.sessions.user
   }
 }
 

@@ -124,11 +124,6 @@ export const FormWrapper = styled.div`
   background: white;
 `
 
-// const Span = styled.span`
-//   font-size: 1.8rem;
-//   color: coral;
-// `
-
 export const Section = styled.section`
   padding-top: 15%;
 `
