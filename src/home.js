@@ -6,6 +6,10 @@ import Feed from './feed'
 import { fakeAuth } from './route'
 import { Trending } from './trending'
 
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import * as Actions from './actions/postaction'
+
 import styled from 'styled-components'
 
 export const StyledContent = styled.div`
@@ -22,32 +26,41 @@ class Home extends Component {
       topics: ['topic1', 'topic2', 'topic3', 'topic4']
     }
   }
+
+  ComponentDidMount() {
+    this.props.actions.fetchPosts()
+  }
+
   render() {
-    console.log(this.props.location.state)
-    if(sessionStorage.getItem('auth')!==null) {
-      // user
-      console.log('logined')
-      return (
-        <div>
-          <StyledContent>
-            <Trending topics={this.state.topics} />
-            <Feed/>
-          </StyledContent>
-        </div>
-      )
+    console.log('inside home', this.props.posts)
+    if(Object.keys(this.props.posts).length===0) {
+      this.props.actions.fetchPosts()
     }
 
     return (
       <div>
         <StyledContent>
           <Trending topics={this.state.topics} />
-          <Feed/>
+          <Feed posts={this.props.posts}/>
         </StyledContent>
       </div>
     )
   }
 }
 
+const mapStateToProps = (state, props) => {
+    // state from store to props
+  console.log(state.posts)
+  return {
+    posts: state.posts.posts
+  }
+}
 
+const mapDispatchToProps = (dispatch) => (
+  // action from dispatch to store
+  {
+    actions: bindActionCreators(Actions, dispatch)
+  }
+)
 
-export default Home
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

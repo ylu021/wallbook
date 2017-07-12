@@ -20,29 +20,6 @@ redisClient.on('error', (err) => {
   console.error(`Error ${err}`)
 })
 
-// // initialize Passport middleware and accepting a promise
-// let jwtOptions = {
-//   secretOrKey: getPrivateKey(),
-//   jwtFromRequest: ExtractJwt.fromAuthHeader()
-// }
-// const strategy = new Strategy(jwtOptions, (payload, done) => {
-//   console.log('payload received', payload)
-//   (async() => {
-//   //   // look for the user inside database
-//     const client = await pool.connect()
-//     const query = pquery.bind(client)
-//     const res = await query('SELECT * FROM Users WHERE id = $1',[payload.id])
-//     // console.log(res)
-//     if(res.rowCount>0) {
-//       return done(null, {id: res.rows[0].id})
-//     }else {
-//       return done(null, false)
-//     }
-//     client.release()
-//   })().catch(e)
-// })
-// console.log(strategy)
-// passport.use(strategy)
 const app = express()
 app.use(passportAuth().initialize())
 // process request body json and form
@@ -53,12 +30,6 @@ app.get('/', (req, res) => {
   res.send('hello from express!')
 })
 
-// app.get('/api/user', (req, res, next) => {
-//   passport.authenticate('jwt', (jreq, jres, jnext) => {
-//       res.json({fetched: jres, id: req.get('Authorization')})
-//   })(req, res, next)
-// })
-
 app.get('/api/user', passportAuth().authenticate(), (req, res, next) => {
   let fetched = false
   if(req.get('Authorization')) {
@@ -66,6 +37,59 @@ app.get('/api/user', passportAuth().authenticate(), (req, res, next) => {
   } else {
     res.status(401).json({user: {}})
   }
+})
+
+app.put('/api/like', passportAuth().authenticate(), (req, res, next) => {
+  if(req.get('Authorization')) {
+    (async() => {
+      const { id } = req.user.details
+      const { postid } = req.body
+
+      const client = await pool.connect()
+      const query = pquery.bind(client)
+      // get current likes
+      let liked = false
+      let likes = await query('SELECT COUNT(post_id) AS count FROM Likes WHERE post_id = $1', [postid])
+      likes = likes.rows[0].count
+      const exist = await query('SELECT * FROM Likes WHERE user_id = $1 and post_id = $2', [id, postid])
+      if(exist.rowCount>0) {
+        // delete
+        await query('DELETE FROM Likes WHERE user_id = $1 and post_id = $2', [id, postid])
+        likes = likes - 1
+        liked = false
+      } else {
+        await query('INSERT INTO Likes (user_id, post_id) VALUES($1, $2)', [id, postid])
+        likes = +likes + 1
+        liked = true
+      }
+      client.release()
+      res.json({ liked: liked, likes: likes })
+    })().catch(next)
+  } else {
+    res.status(401).json({})
+  }
+})
+
+app.get('/api/posts', (req, res, next) => {
+  (async() => {
+    const client = await pool.connect()
+    const query = pquery.bind(client)
+    let posts = await query('SELECT * FROM Posts')
+    posts = posts.rows
+    const rows = await bluebird.all(posts.map(async (post) => {
+      let user = await query('SELECT avatar, username From Users WHERE id = $1', [post.user_id])
+      const { avatar, username } = user.rows[0]
+      post['avatar'] = avatar
+      post['username'] = username
+      if(post.tag_id) {
+        let tag = await query('SELECT name FROM Tags WHERE id = $1', [post.tag_id])
+        post['tag'] = tag.rows[0].name
+      }
+      return post
+    }))
+    client.release()
+    res.json({posts: rows})
+  })().catch(next)
 })
 
 app.post('/api/posts', passportAuth().authenticate(), (req, res, next) => {

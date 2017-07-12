@@ -87,6 +87,10 @@ export async function fetchUser() {
   return data
 }
 
+/*
+  Post related
+*/
+
 export async function addPost(post) {
   let response = await fetch('api/posts', {
     method: 'POST',
@@ -95,5 +99,24 @@ export async function addPost(post) {
   })
   let data = await response.json()
   // convert stringify to json using parse, this is a shortcut
+  return data
+}
+
+export async function fetchPosts() {
+  let response = await fetch('api/posts', {
+    method: 'GET',
+    headers
+  })
+  let data = await response.json()
+  return data
+}
+
+export async function likePost(post) {
+  let response = await fetch('api/like', {
+    method: 'PUT',
+    headers: {...headers, ...requestHeaders()},
+    body: JSON.stringify(post)
+  })
+  let data = await response.json()
   return data
 }
