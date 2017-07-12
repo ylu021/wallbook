@@ -4,7 +4,9 @@ const initialState = {
   token: '',
   fetched: false,
   isFetching: false,
-  user: {}
+  user: {},
+  isAdding: false,
+  added: false
 }
 export default(state = initialState, action) => {
   switch(action.type) {
@@ -27,6 +29,23 @@ export default(state = initialState, action) => {
         error: action.payload,
         fetched: action.payload.fetched,
       }
+      case `${types.ADD_POST}_LOADING`:
+        return {
+          user: state.user,
+          isAdding: true,
+        }
+      case `${types.ADD_POST}_SUCCESS`:
+        return {
+          user: state.user,
+          isAdding: false,
+          added: action.payload.added
+        }
+      case `${types.ADD_POST}_ERROR`:
+        return {
+          isAdding: false,
+          error: action.payload,
+          added: action.payload.added,
+        }
     default:
       return state
   }

@@ -86,3 +86,14 @@ export async function fetchUser() {
   }
   return data
 }
+
+export async function addPost(post) {
+  let response = await fetch('api/posts', {
+    method: 'POST',
+    headers: {...headers, ...requestHeaders()},
+    body: JSON.stringify(post)
+  })
+  let data = await response.json()
+  // convert stringify to json using parse, this is a shortcut
+  return data
+}

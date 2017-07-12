@@ -3,8 +3,17 @@ import { Modal, ModalBody, ModalFooter, Input } from 'reactstrap'
 import CusButton from '../component/button'
 import { InfoTitle } from '../component/title'
 import { FormRow } from '../component/form'
+import Span from '../component/span'
 import styled from 'styled-components'
 import _ from 'lodash'
+
+import PropTypes from 'prop-types'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import * as Actions from '../actions/useraction'
+
+import { Redirect } from 'react-router-dom'
+
 
 class FeedForm extends Component {
   constructor(props) {
@@ -39,12 +48,20 @@ class FeedForm extends Component {
     } else {
       let tag = this.state.tag.trim()
       let post = this.state.post
+      this.props.actions
 
       // post
+      this.props.actions.addPost({
+        content: post,
+        tag: tag
+      })
     }
   }
 
   render() {
+    if(this.props.added) {
+      window.location.reload()
+    }
     return (
       <div className='my-auto'>
         <CusButton color='#fe7aa5' size={'small'} onClick={this.toggle}>Post on wall</CusButton>
@@ -56,7 +73,7 @@ class FeedForm extends Component {
           <div className='dropdown-divider' />
           <ModalBody>
             <Form placeholder={this.state.error} name='post' onChange={this.handleInput}/>
-            <Tags placeholder={'Add a keyword to spread your feed'} label='Topic' name='topic' inputtype="text" onChange={this.handleInput} />
+            <Tags placeholder={'Add a keyword to spread your feed'} label='Topic' name='tag' inputtype="text" onChange={this.handleInput} />
             { this.state.tags? (
               <ul>
                 {this.state.tags.map((tag, idx) => {
@@ -68,6 +85,7 @@ class FeedForm extends Component {
           <ModalFooter>
             <CusButton color={'#fe7aa5'} onClick={this.post}>Post</CusButton>{' '}
             <CusButton onClick={this.toggle}>Cancel</CusButton>
+            {this.props.isAdding? <Span>Submitting...</Span>: null}
           </ModalFooter>
         </Modal>
       </div>
@@ -101,4 +119,19 @@ const ModalHeader = styled.div`
   padding: 1rem 1.5rem;
 `
 
-export default FeedForm
+const mapStateToProps = (state, props) => {
+  console.log('sessions', state.sessions)
+  return {
+    added: state.sessions.added,
+    isAdding: state.sessions.isAdding,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => (
+  // action from dispatch to store
+  {
+    actions: bindActionCreators(Actions, dispatch)
+  }
+)
+
+export default connect(mapStateToProps, mapDispatchToProps)(FeedForm)

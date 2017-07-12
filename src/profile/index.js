@@ -172,7 +172,6 @@ const BoldCusLink = CusLink.extend`
 
 const mapStateToProps = (state, props) => {
     // state from store to props
-    console.log('sessions', state.sessions)
   return {
     fetched: state.sessions.fetched,
     user: state.sessions.user

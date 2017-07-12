@@ -68,6 +68,51 @@ app.get('/api/user', passportAuth().authenticate(), (req, res, next) => {
   }
 })
 
+app.post('/api/posts', passportAuth().authenticate(), (req, res, next) => {
+  if(req.get('Authorization')) {
+    (async() => {
+      let added = false
+      console.log( req.body )
+      const { content, tag } = req.body
+      const { id } = req.user.details
+
+      const client = await pool.connect()
+      const query = pquery.bind(client)
+      const exist = null
+      try {
+        // adding tag
+        await query('BEGIN')
+        if(tag) {
+          console.log(tag)
+          let inserted = await query('SELECT id FROM Tags WHERE name = $1', [tag])
+          if(inserted.rowCount===0) {
+            // inserted
+            inserted = await query('INSERT INTO Tags (name) VALUES ($1) RETURNING id', [tag])
+          }
+          await query('INSERT INTO Posts (user_id, content, tag_id) VALUES ($1, $2, $3)', [
+            id, content, inserted.rows[0].id
+          ])
+
+        } else {
+          await query('INSERT INTO Posts (user_id, content) VALUES ($1, $2)', [
+            id, content
+          ])
+        }
+        await query('COMMIT')
+        added = true
+      } catch(e) {
+        await query('ROLLBACK')
+        throw e
+      }
+      client.release()
+      console.log(added)
+      res.json({added: added})
+    })().catch(next)
+  } else {
+    res.status(401).json({added: added})
+  }
+})
+
 // signup
 app.post('/api/users', (req, res, next) => {
   (async() => {

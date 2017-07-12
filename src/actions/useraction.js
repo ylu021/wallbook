@@ -11,6 +11,15 @@ export const addUser = (user) => {
   }
 }
 
+export const addPost = (post) => {
+  return {
+    type: types.ADD_POST,
+    payload: {
+      promise: api.addPost(post)
+    }
+  }
+}
+
 export const addAvatar = (user) => {
   return {
     type: types.ADD_AVATAR,
