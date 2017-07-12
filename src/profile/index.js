@@ -27,7 +27,9 @@ class Profile extends Component {
 
   componentDidMount() {
     // using token to load user info
-    this.props.actions.fetchUser()
+    if(this.props.logined && Object.keys(this.props.user).length===0) {
+      this.props.actions.fetchUser()
+    }
   }
 
   post = () => {
