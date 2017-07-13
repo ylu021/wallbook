@@ -55,15 +55,11 @@ app.put('/api/like', passportAuth().authenticate(), (req, res, next) => {
       if(exist.rowCount>0) {
         // delete
         await query('DELETE FROM Likes WHERE user_id = $1 and post_id = $2', [id, postid])
-        likes = likes - 1
-        liked = false
       } else {
         await query('INSERT INTO Likes (user_id, post_id) VALUES($1, $2)', [id, postid])
-        likes = +likes + 1
-        liked = true
       }
       client.release()
-      res.json({ liked: liked, likes: likes })
+      res.json({})
     })().catch(next)
   } else {
     res.status(401).json({})
@@ -85,11 +81,56 @@ app.get('/api/posts', (req, res, next) => {
         let tag = await query('SELECT name FROM Tags WHERE id = $1', [post.tag_id])
         post['tag'] = tag.rows[0].name
       }
+      let likes = await query('SELECT COUNT(post_id) AS count FROM Likes WHERE post_id = $1', [post.id])
+      post['likes'] = likes.rows[0].count
       return post
     }))
     client.release()
     res.json({posts: rows})
   })().catch(next)
+})
+
+app.get('/api/posts/liked', passportAuth().authenticate(), (req, res, next) => {
+  if(req.get('Authorization')) {
+    (async() => {
+      const { id } = req.user.details
+      const client = await pool.connect()
+      const query = pquery.bind(client)
+      let posts = await query('SELECT * FROM Posts')
+      posts = posts.rows
+      const rows = await bluebird.all(posts.map(async (post) => {
+        let user = await query('SELECT avatar, username From Users WHERE id = $1', [post.user_id])
+        const { avatar, username } = user.rows[0]
+        post['avatar'] = avatar
+        post['username'] = username
+        if(post.tag_id) {
+          let tag = await query('SELECT name FROM Tags WHERE id = $1', [post.tag_id])
+          post['tag'] = tag.rows[0].name
+        }
+        let likes = await query('SELECT COUNT(post_id) AS count FROM Likes WHERE post_id = $1', [post.id])
+        post['likes'] = likes.rows[0].count
+        let liked = await query('SELECT COUNT(user_id) AS count FROM Likes WHERE user_id = $1 and post_id = $2', [id, post.id])
+        post['liked'] = +liked.rows[0].count === 0 ? false : true
+        return post
+      }))
+      client.release()
+      res.json({posts: rows})
+    })().catch(next)
+  }
+})
+
+app.get('/api/posts/liked/:postid', passportAuth().authenticate(), (req, res, next) => {
+  if(req.get('Authorization')) {
+    (async() => {
+      const { postid } = req.params
+      const { id } = req.user.details
+      const client = await pool.connect()
+      const query = pquery.bind(client)
+      let likes = await query('SELECT COUNT(post_id) AS count FROM Likes WHERE post_id = $1 and user_id = $2', [postid, id])
+      console.log(id, likes.rows[0].count)
+      res.json({ liked: +likes.rows[0].count===0? false : true, postid: postid })
+    })().catch(next)
+  }
 })
 
 app.post('/api/posts', passportAuth().authenticate(), (req, res, next) => {

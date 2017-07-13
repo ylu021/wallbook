@@ -111,6 +111,25 @@ export async function fetchPosts() {
   return data
 }
 
+
+export async function fetchPostsAuth() {
+  let response = await fetch('api/posts/liked', {
+    method: 'GET',
+    headers: {...headers, ...requestHeaders()}
+  })
+  let data = await response.json()
+  return data
+}
+
+export async function fetchLiked(postid) {
+  let response = await fetch(`/api/posts/liked/${postid}`, {
+    method: 'GET',
+    headers: {...headers, ...requestHeaders()}
+  })
+  let data = await response.json()
+  return data
+}
+
 export async function likePost(post) {
   let response = await fetch('api/like', {
     method: 'PUT',

@@ -40,7 +40,6 @@ class Profile extends Component {
 
   render() {
     const { user, fetched, logined } = this.props
-    console.log('inside profile', this.props)
     if(logined && Object.keys(user).length===0) {
       // end up calling fetch inside render
       this.props.actions.fetchUser()

@@ -5,11 +5,24 @@ import styled from 'styled-components'
 import { StatusWrapper } from './'
 import Likes from './feed_likes'
 
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import * as Actions from '../actions/postaction'
+
+import _ from 'lodash'
+
 class FeedStatus extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      liked: null
+    }
+  }
+
   render() {
     return (
       <StatusWrapper>
-        <Likes />
+        <Likes {...this.props} />
         <div className="d-flex">
           <CommentsStatus commentscount={23} />
           <Share />
@@ -17,6 +30,11 @@ class FeedStatus extends Component {
       </StatusWrapper>
     )
   }
+}
+
+FeedStatus.PropTypes = {
+  id: PropTypes.number,
+  likes: PropTypes.string
 }
 
 const Text = styled.span`
@@ -46,5 +64,4 @@ const Share = (props) => {
   )
 }
 
-
-export default FeedStatus
+export default connect()(FeedStatus)

@@ -5,6 +5,10 @@ import PropTypes from 'prop-types'
 import { ProfileImg, Img } from '../component/usercomponent'
 import Tag from '../component/tag'
 
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import * as Actions from '../actions/postaction'
+
 const Card = styled.div`
   background: white;
   width: 48%;
@@ -17,12 +21,11 @@ const Card = styled.div`
 class Feed extends Component {
   render() {
     const { posts } = this.props
-    console.log('inside feed', this.props)
     return (
       <div>
         {
           Object.keys(posts).map((key, idx) => {
-            return <FeedItem post={posts[key]} key={idx}/>
+            return <FeedItem post={posts[key]} key={idx} />
           })
         }
       </div>
@@ -41,7 +44,7 @@ const FeedItem = (props) => {
       <FeedHeader date={'5 mins ago'} profile_img={avatar} username={username} />
       <FeedPost post={content}/>
       {tag? <FeedTag post={tag}/> : null}
-      <FeedStatus />
+      <FeedStatus {...props.post} />
     </Card>
   )
 }
@@ -120,4 +123,19 @@ const FeedTag = (props) => (
   </TagWrapper>
 )
 
-export default Feed;
+const mapStateToProps = (state, props) => {
+    // state from store to props
+  return {
+    // liked: true,
+    newlikes: state.posts.likes
+  }
+}
+
+const mapDispatchToProps = (dispatch) => (
+  // action from dispatch to store
+  {
+    actions: bindActionCreators(Actions, dispatch)
+  }
+)
+
+export default connect(mapStateToProps, mapDispatchToProps)(Feed)

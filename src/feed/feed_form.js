@@ -120,7 +120,7 @@ const ModalHeader = styled.div`
 `
 
 const mapStateToProps = (state, props) => {
-  console.log('sessions', state.sessions)
+  // console.log('sessions', state.sessions)
   return {
     added: state.sessions.added,
     isAdding: state.sessions.isAdding,
