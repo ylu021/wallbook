@@ -1,14 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
-import './index.css';
-import 'bootstrap/dist/css/bootstrap.css';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './App'
+import registerServiceWorker from './registerServiceWorker'
+import './index.css'
+import 'bootstrap/dist/css/bootstrap.css'
 import { Provider } from 'react-redux'
 import Store from './store'
-import { Routes } from './route';
+import { Routes } from './route'
+import { persistStore } from 'redux-persist'
+
 
 const storeInstance = Store()
+persistStore(storeInstance)
 
 ReactDOM.render(
   <Provider store={ storeInstance }>
@@ -16,4 +19,4 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root')
 )
-registerServiceWorker();
+registerServiceWorker()

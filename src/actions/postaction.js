@@ -18,3 +18,21 @@ export const fetchPosts = () => {
     }
   }
 }
+
+export const fetchPostsAuth = () => {
+  return {
+    type: types.FETCH_POSTS_AUTH,
+    payload: {
+      promise: api.fetchPostsAuth()
+    }
+  }
+}
+
+export const fetchLiked = (postid) => {
+  return {
+    type: types.USER_LIKED,
+    payload: {
+      promise: api.fetchLiked(postid)
+    }
+  }
+}

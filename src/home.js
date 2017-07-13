@@ -41,11 +41,9 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    console.log('did mount', this.props.posts)
-    // calling it the first time
     if(sessionStorage.getItem('auth')) {
-        // get liked as well
-        this.props.actions.fetchPostsAuth()
+      // get liked as well
+      this.props.actions.fetchPostsAuth()
     } else {
       this.props.actions.fetchPosts()
     }
@@ -54,6 +52,7 @@ class Home extends Component {
   componentWillReceiveProps(nextProps) {
     console.log('how many times rc', this.props, nextProps)
     if(!_.isEqual(this.props, nextProps)) {
+      console.log('rc not equal', this.props, nextProps)
       this.setState({
         posts: nextProps.posts
       })
