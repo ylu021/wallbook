@@ -29,6 +29,7 @@ class Login extends Component {
         email: false,
         password: false,
       },
+      message: ''
     }
   }
   handleInput = (e) => {
@@ -63,7 +64,8 @@ class Login extends Component {
     let { from } = this.props.location.state || { from: { pathname: '/' } }
     const { redirect } = this.state
     const {email, password} = this.state.formErrors
-    const { isLoggingin, error, logined, done, message, verified, user } = this.props
+    const { isLoggingin, error, logined, done, message, verified, user, exist } = this.props
+    console.log(verified, exist)
     if(isLoggingin) {
       return (<Loading text='Logging In' />)
     }
@@ -90,7 +92,7 @@ class Login extends Component {
                       {message? (
                         <Span>
                           {message+' '}
-                          {!verified? (<Link to='/verify'>verify here</Link>): null}
+                          {verified===false && exist? (<Link to='/verify'>verify here</Link>): null}
                         </Span>) : null}
                     </div>
                   </CusForm>
@@ -114,6 +116,7 @@ const mapStateToProps = (state, props) => {
     error: state.users.error,
     message: state.users.message,
     verified: state.users.verified,
+    exist: state.users.exist,
     user: state.users.user
   }
 }

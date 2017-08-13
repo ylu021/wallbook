@@ -10,7 +10,7 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import * as Actions from '../actions/useraction'
+import * as Actions from '../actions/postaction'
 
 import { Redirect } from 'react-router-dom'
 
@@ -48,20 +48,31 @@ class FeedForm extends Component {
     } else {
       let tag = this.state.tag.trim()
       let post = this.state.post
-      this.props.actions
 
       // post
       this.props.actions.addPost({
         content: post,
         tag: tag
       })
+      
+    }
+  }
+
+  componentWillReceiveProps(nextP) {
+    if(this.props.added!==nextP.added) {
+      console.log('inside feed form', this.props, nextP)
+      if(nextP.added) {
+        alert('You post is successfully posted')
+        this.toggle()
+      }
     }
   }
 
   render() {
-    if(this.props.added) {
-      window.location.reload()
-    }
+    // if(this.props.added) {
+    //   // window.location.reload()
+    //   this.toggle()
+    // }
     return (
       <div className='my-auto'>
         <CusButton color='#fe7aa5' size={'small'} onClick={this.toggle}>Post on wall</CusButton>
@@ -122,8 +133,9 @@ const ModalHeader = styled.div`
 const mapStateToProps = (state, props) => {
   // console.log('sessions', state.sessions)
   return {
-    added: state.sessions.added,
-    isAdding: state.sessions.isAdding,
+    added: state.posts.added,
+    isAdding: state.posts.isAdding,
+    posts: state.posts.posts
   }
 }
 

@@ -1,6 +1,6 @@
 import types from '../constant'
 
-const initialState = {
+export const initialState = {
   isFetching: false,
   error: false,
   added: false,
@@ -11,8 +11,7 @@ const initialState = {
   isVerifying: false,
   logined: false,
   isLoggingin: false,
-  message: '',
-  verified: true
+  message: ''
 }
 export default(state = initialState, action) => {
   switch(action.type) {
@@ -103,6 +102,7 @@ export default(state = initialState, action) => {
         logined: action.payload.logined,
         message: action.payload.message,
         verified: action.payload.verified,
+        exist: action.payload.exist,
         isLoggingin: false,
         user: action.payload.user,
         done: true

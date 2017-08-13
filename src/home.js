@@ -30,43 +30,39 @@ class Home extends Component {
     }
   }
 
-  componentWillMount() {
-    console.log('will mount')
-    if(sessionStorage.getItem('auth')) {
-        // get liked as well
-        this.props.actions.fetchPostsAuth()
-    } else {
-      this.props.actions.fetchPosts()
-    }
-  }
-
   componentDidMount() {
+    console.log('home mounted')
     if(sessionStorage.getItem('auth')) {
       // get liked as well
       this.props.actions.fetchPostsAuth()
+      console.log(this.props.actions)
     } else {
       this.props.actions.fetchPosts()
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('how many times rc', this.props, nextProps)
     if(!_.isEqual(this.props, nextProps)) {
-      console.log('rc not equal', this.props, nextProps)
-      this.setState({
-        posts: nextProps.posts
-      })
+      console.log('rc not equal', this.props.posts, nextProps.posts)
+      if(sessionStorage.getItem('auth')) {
+        this.props.actions.fetchPostsAuth()
+      }
     }
   }
 
-  render() {
-    console.log('current posts', this.state.posts)
+  updatePosts = () => {
+    console.log('inside updating posts')
+    this.props.actions.fetchPostsAuth()
+  }
 
+  render() {
+    const { posts } = this.props
+    let postitems = posts
     return (
       <div>
         <StyledContent>
           <Trending topics={this.state.topics} />
-          <Feed posts={this.state.posts}/>
+          <Feed posts={postitems} onChange={this.updatePosts} />
         </StyledContent>
       </div>
     )
@@ -75,7 +71,7 @@ class Home extends Component {
 
 const mapStateToProps = (state, props) => {
     // state from store to props
-  // console.log(state.posts)
+  console.log('mapping', state.posts)
   return {
     posts: state.posts.posts,
     done: state.posts.done

@@ -39,14 +39,15 @@ export const fakeAuth = {
     this.isAuthenticated = true
     this.user = user
     sessionStorage.setItem('auth', JSON.stringify(user))
-    console.log('inside authenticate')
+    // console.log('inside authenticate')
     // setTimeout(cb, 100) // fake async
     cb()
 
   },
   signout(cb) {
     this.isAuthenticated = false
-    sessionStorage.clear()
+    sessionStorage.removeItem('auth')
+    // sessionStorage.clear()
     console.log('inside signout')
     // setTimeout(cb, 100) // fake async
     cb()

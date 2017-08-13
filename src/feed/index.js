@@ -8,6 +8,7 @@ import Tag from '../component/tag'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as Actions from '../actions/postaction'
+import _ from 'lodash'
 
 const Card = styled.div`
   background: white;
@@ -19,16 +20,29 @@ const Card = styled.div`
 `
 
 class Feed extends Component {
+  // componentWillMount() {
+  //   if(!this.props.posts) {
+  //     this.props.onChange()
+  //   }
+  // }
+
+  componentWillReceiveProps(nextP) {
+    if(_.isEqual(this.props, nextP)) {
+      if(!nextP.posts) {
+        this.props.onChange()
+      }
+    }
+  }
+
   render() {
-    const { posts } = this.props
+    let { posts } = this.props
     return (
-      <div>
-        {
-          Object.keys(posts).map((key, idx) => {
-            return <FeedItem post={posts[key]} key={idx} />
-          })
-        }
-      </div>
+        <div>{ posts? 
+            Object.keys(posts).map((key, idx) => {
+              return <FeedItem post={posts[key]} key={idx} />
+            })
+          : null }
+        </div>
     )
   }
 }

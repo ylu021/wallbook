@@ -99,23 +99,13 @@ app.get('/api/posts/liked', passportAuth().authenticate(), (req, res, next) => {
       let posts = await query('SELECT id FROM Posts')
       posts = posts.rows
       const rows = await bluebird.all(posts.map(async (post) => {
-        // let user = await query('SELECT avatar, username From Users WHERE id = $1', [post.user_id])
-        // const { avatar, username } = user.rows[0]
-        // post['avatar'] = avatar
-        // post['username'] = username
-        // if(post.tag_id) {
-        //   let tag = await query('SELECT name FROM Tags WHERE id = $1', [post.tag_id])
-        //   post['tag'] = tag.rows[0].name
-        // }
-        // let likes = await query('SELECT COUNT(post_id) AS count FROM Likes WHERE post_id = $1', [post.id])
-        // post['likes'] = likes.rows[0].count
         let liked = await query('SELECT COUNT(user_id) AS count FROM Likes WHERE user_id = $1 and post_id = $2', [id, post.id])
         post['liked'] = +liked.rows[0].count === 0 ? false : true
         post['id'] = post.id
         return post
       }))
-      client.release()
-      res.json({posts: rows})
+    client.release()
+    res.json({posts: rows})
     })().catch(next)
   }
 })
@@ -145,6 +135,7 @@ app.post('/api/posts', passportAuth().authenticate(), (req, res, next) => {
       const client = await pool.connect()
       const query = pquery.bind(client)
       const exist = null
+      let postid = null
       try {
         // adding tag
         await query('BEGIN')
@@ -155,12 +146,12 @@ app.post('/api/posts', passportAuth().authenticate(), (req, res, next) => {
             // inserted
             inserted = await query('INSERT INTO Tags (name) VALUES ($1) RETURNING id', [tag])
           }
-          await query('INSERT INTO Posts (user_id, content, tag_id) VALUES ($1, $2, $3)', [
+          postid = await query('INSERT INTO Posts (user_id, content, tag_id) VALUES ($1, $2, $3) RETURNING id', [
             id, content, inserted.rows[0].id
           ])
 
         } else {
-          await query('INSERT INTO Posts (user_id, content) VALUES ($1, $2)', [
+          postid = await query('INSERT INTO Posts (user_id, content) VALUES ($1, $2) RETURNING id', [
             id, content
           ])
         }
@@ -170,12 +161,26 @@ app.post('/api/posts', passportAuth().authenticate(), (req, res, next) => {
         await query('ROLLBACK')
         throw e
       }
+      console.log(postid)
+      let post = await query('SELECT * FROM Posts WHERE id = $1', [postid.rows[0].id])
+      if(post) {
+        post = post.rows[0]
+        post['liked'] = false
+        let user = await query('SELECT avatar, username From Users WHERE id = $1', [id])
+        const { avatar, username } = user.rows[0]
+        post['avatar'] = avatar
+        post['username'] = username
+      }
       client.release()
       console.log(added)
-      res.json({added: added})
+      
+      res.json({
+        added: added,
+        post: post
+      })
     })().catch(next)
   } else {
-    res.status(401).json({added: added})
+    res.status(401).json({added: added, posts: rows})
   }
 })
 
@@ -360,12 +365,12 @@ app.post('/api/login', (req, res, next) => {
     let logined = false // check dup
     const exist = await query('SELECT * FROM Users WHERE email = $1', [email])
     if(exist.rowCount!==1){
-      res.status(403).json({message: 'No user found'})
+      res.status(403).json({message: 'No user found', exist: false})
     }
     if(exist.rowCount===1 && password === decrypt(exist.rows[0].password)) {
       // account verified and logined
       if(!exist.rows[0].active) {
-        res.status(401).json({message: 'You account is not verified'})
+        res.status(401).json({message: 'You account is not verified', verified: false, exist: true})
       }else {
         let payload = {
           id: exist.rows[0].id
@@ -377,7 +382,8 @@ app.post('/api/login', (req, res, next) => {
           user: {
             token: token,
             username: exist.rows[0].username
-          }
+          },
+          verified: true
         })
 
       }

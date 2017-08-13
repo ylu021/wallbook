@@ -30,6 +30,7 @@ class Signup extends Component {
       },
     }
   }
+  
   handleInput = (e) => {
     const {name, value} = e.target
     this.setState({

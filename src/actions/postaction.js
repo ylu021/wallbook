@@ -1,6 +1,15 @@
 import types from '../constant'
 import * as api from '../api'
 
+export const addPost = (post) => {
+  return {
+    type: types.ADD_POST,
+    payload: {
+      promise: api.addPost(post)
+    }
+  }
+}
+
 export const likePost = (post) => {
   return {
     type: types.LIKE_POST,

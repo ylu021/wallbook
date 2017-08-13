@@ -98,6 +98,11 @@ export async function addPost(post) {
     body: JSON.stringify(post)
   })
   let data = await response.json()
+  
+  let response2 = await fetchPostsAuth()
+  console.log(response2, typeof(response2))
+  data['posts'] = response2.posts
+  console.log(data)
   // convert stringify to json using parse, this is a shortcut
   return data
 }
@@ -108,6 +113,7 @@ export async function fetchPosts() {
     headers
   })
   let data = await response.json()
+  console.log(data)
   return data
 }
 

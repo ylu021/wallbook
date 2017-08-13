@@ -1,12 +1,39 @@
 import types from '../constant'
 import _ from 'lodash'
+import merge from 'merge'
 
 const initialState = {
   posts: {},
-  done: false
+  done: false,
+  isAdding: false,
+  added: false
 }
 export default(state = initialState, action) => {
   switch(action.type) {
+    case `${types.ADD_POST}_LOADING`:
+      return {
+        ...state,
+        isAdding: true,
+      }
+    case `${types.ADD_POST}_SUCCESS`:
+      // state.posts.append(action.payload.post)
+      // console.log('added', posts)
+      posts = state.posts
+      console.log(_.size(posts), action.payload.post)
+      posts[_.size(posts)] = action.payload.post
+      console.log(posts)
+      return {
+        isAdding: false,
+        added: action.payload.added,
+        posts: posts
+      }
+    case `${types.ADD_POST}_ERROR`:
+      return {
+        ...state,
+        isAdding: false,
+        error: action.payload,
+        added: action.payload.added,
+      }
     case `${types.FETCH_POSTS}_SUCCESS`:
       return {
         ...state,
@@ -23,11 +50,11 @@ export default(state = initialState, action) => {
           return _.merge(post, _.find(action.payload.posts, { 'id' : +post.id }));
       })
       state.posts = posts
-      console.log('loading success', posts)
+      // console.log('loading success', posts)
       return {
         ...state,
-        done: true
-        // posts: action.payload.posts
+        done: true,
+        posts: posts
       }
     case `${types.FETCH_POSTS_AUTH}_ERROR`:
       return {

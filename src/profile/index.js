@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { persistor } from '../index'
+
 import CusButton from '../component/button'
 import { ProfileImg, Img } from '../component/usercomponent'
 import { Link } from 'react-router-dom'
@@ -19,6 +21,7 @@ class Profile extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      fetched: false,
       username: '',
       logined: !!sessionStorage.getItem('auth'),
       showPostForm: false
@@ -26,9 +29,27 @@ class Profile extends Component {
   }
 
   componentDidMount() {
+    console.log('did mount profile')
     // using token to load user info
-    if(this.props.logined && Object.keys(this.props.user).length===0) {
+    if(!!sessionStorage.getItem('auth')) {
       this.props.actions.fetchUser()
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(!_.isEqual(this.props.logined, nextProps.logined)) { 
+      console.log('not equal omg', this.props, nextProps)
+      this.setState({
+        logined: nextProps.logined
+      })
+      this.props.actions.fetchUser()
+    }
+
+    if(!_.isEqual(this.props.fetched, nextProps.fetched)) {
+      console.log('not equal fetch omg', this.props, nextProps)
+      this.setState({
+        fetched: nextProps.fetched
+      })
     }
   }
 
@@ -38,18 +59,31 @@ class Profile extends Component {
     })
   }
 
+  logout = (e) => {
+    e.preventDefault()
+    // console.log('persistor', persistor)
+    // return <Redirect to={'/'} />
+    // fakeAuth.signout(() => {
+      // sessionStorage.clear()
+      sessionStorage.removeItem('auth')
+      persistor.purge(['users', 'sessions'])
+      // this.props.actions.logoutUser() // back to base 1 rootReducer
+
+    // })
+      this.setState({
+        logined: false
+      })
+  }
+
   render() {
-    const { user, fetched, logined } = this.props
-    if(logined && Object.keys(user).length===0) {
-      // end up calling fetch inside render
-      this.props.actions.fetchUser()
-    }
+    let user = this.props.user
+    console.log(this.state)
     return (
-        logined ? (
+        this.state.logined ? (
           <div>
             <ProfileSection className={'d-flex'}>
               <FeedForm />
-              <User user={user} />
+              <User user={user} logout={this.logout}/>
             </ProfileSection>
           </div>
         ) : (
@@ -138,11 +172,7 @@ class UserPre extends Component {
             </div>
             <div className='dropdown-divider'></div>
             <div className='d-flex'>
-              <BoldCusLink to='' onClick={
-                () => (fakeAuth.signout(() => {
-                  return <Redirect to={'/'} />
-                }))
-              }>{'Sign Out'}</BoldCusLink>
+              <BoldCusLink to='' onClick={this.props.logout}>{'Sign Out'}</BoldCusLink>
             </div>
           </Fixed>
         : null}
@@ -173,6 +203,7 @@ const BoldCusLink = CusLink.extend`
 
 const mapStateToProps = (state, props) => {
     // state from store to props
+    console.log(state.sessions)
   return {
     fetched: state.sessions.fetched,
     user: state.sessions.user
