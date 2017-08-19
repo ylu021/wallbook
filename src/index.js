@@ -14,7 +14,7 @@ import { asyncSessionStorage } from 'redux-persist/storages'
 const storeInstance = Store()
 export const persistor = persistStore(storeInstance, {
   storage: asyncSessionStorage,
-  whitelist: ['sessions', 'posts']
+  whitelist: ['sessions']
 }, () => {
   console.log('rehydration complete')
 })

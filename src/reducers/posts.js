@@ -6,7 +6,7 @@ const initialState = {
   posts: {},
   done: false,
   isAdding: false,
-  added: false
+  // added: false
 }
 export default(state = initialState, action) => {
   switch(action.type) {
@@ -16,16 +16,10 @@ export default(state = initialState, action) => {
         isAdding: true,
       }
     case `${types.ADD_POST}_SUCCESS`:
-      // state.posts.append(action.payload.post)
-      // console.log('added', posts)
-      posts = state.posts
-      console.log(_.size(posts), action.payload.post)
-      posts[_.size(posts)] = action.payload.post
-      console.log(posts)
       return {
         isAdding: false,
         added: action.payload.added,
-        posts: posts
+        posts: action.payload.posts
       }
     case `${types.ADD_POST}_ERROR`:
       return {
@@ -45,16 +39,9 @@ export default(state = initialState, action) => {
         error: action.payload
       }
     case `${types.FETCH_POSTS_AUTH}_SUCCESS`:
-      let posts = state.posts
-      posts = _.map(posts, function(post) {
-          return _.merge(post, _.find(action.payload.posts, { 'id' : +post.id }));
-      })
-      state.posts = posts
-      // console.log('loading success', posts)
       return {
-        ...state,
         done: true,
-        posts: posts
+        posts: action.payload.posts
       }
     case `${types.FETCH_POSTS_AUTH}_ERROR`:
       return {
