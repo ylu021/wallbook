@@ -66,45 +66,53 @@ app.put('/api/like', passportAuth().authenticate(), (req, res, next) => {
   }
 })
 
+// load posts
 app.get('/api/posts', (req, res, next) => {
   (async() => {
-    const client = await pool.connect()
-    const query = pquery.bind(client)
-    let posts = await query('SELECT * FROM Posts')
-    posts = posts.rows
-    const rows = await bluebird.all(posts.map(async (post) => {
-      let user = await query('SELECT avatar, username From Users WHERE id = $1', [post.user_id])
-      const { avatar, username } = user.rows[0]
-      post['avatar'] = avatar
-      post['username'] = username
-      if(post.tag_id) {
-        let tag = await query('SELECT name FROM Tags WHERE id = $1', [post.tag_id])
-        post['tag'] = tag.rows[0].name
-      }
-      let likes = await query('SELECT COUNT(post_id) AS count FROM Likes WHERE post_id = $1', [post.id])
-      post['likes'] = likes.rows[0].count
-      return post
-    }))
-    client.release()
-    res.json({posts: rows})
+    let posts = await getPosts()
+    res.json({posts: posts})
   })().catch(next)
 })
 
+async function getPosts() {
+  const client = await pool.connect()
+  const query = pquery.bind(client)
+  let posts = await query('SELECT * FROM Posts ORDER BY id DESC')
+  posts = posts.rows
+  const rows = await bluebird.all(posts.map(async (post) => {
+    let user = await query('SELECT avatar, username From Users WHERE id = $1', [post.user_id])
+    const { avatar, username } = user.rows[0]
+    post['avatar'] = avatar
+    post['username'] = username
+    if(post.tag_id) {
+      let tag = await query('SELECT name FROM Tags WHERE id = $1', [post.tag_id])
+      post['tag'] = tag.rows[0].name
+    }
+    let likes = await query('SELECT COUNT(post_id) AS count FROM Likes WHERE post_id = $1', [post.id])
+    post['likes'] = likes.rows[0].count
+    return post
+  }))
+  client.release()
+  return rows
+}
+
+// load posts with previous liked after login
 app.get('/api/posts/liked', passportAuth().authenticate(), (req, res, next) => {
   if(req.get('Authorization')) {
     (async() => {
       const { id } = req.user.details
       const client = await pool.connect()
       const query = pquery.bind(client)
-      let posts = await query('SELECT id FROM Posts')
-      posts = posts.rows
+      let posts = await getPosts()
       const rows = await bluebird.all(posts.map(async (post) => {
         let liked = await query('SELECT COUNT(user_id) AS count FROM Likes WHERE user_id = $1 and post_id = $2', [id, post.id])
-        post['liked'] = +liked.rows[0].count === 0 ? false : true
+        console.log(liked)
+        post['liked'] = +liked.rows[0].count === '0' ? false : true
         post['id'] = post.id
         return post
       }))
     client.release()
+    console.log(rows)
     res.json({posts: rows})
     })().catch(next)
   }
@@ -124,6 +132,7 @@ app.get('/api/posts/liked/:postid', passportAuth().authenticate(), (req, res, ne
   }
 })
 
+// add post
 app.post('/api/posts', passportAuth().authenticate(), (req, res, next) => {
   if(req.get('Authorization')) {
     (async() => {
@@ -146,6 +155,7 @@ app.post('/api/posts', passportAuth().authenticate(), (req, res, next) => {
             // inserted
             inserted = await query('INSERT INTO Tags (name) VALUES ($1) RETURNING id', [tag])
           }
+          console.log(inserted)
           postid = await query('INSERT INTO Posts (user_id, content, tag_id) VALUES ($1, $2, $3) RETURNING id', [
             id, content, inserted.rows[0].id
           ])
@@ -172,11 +182,11 @@ app.post('/api/posts', passportAuth().authenticate(), (req, res, next) => {
         post['username'] = username
       }
       client.release()
-      console.log(added)
-      
+      let posts = await getPosts()
+      posts.unshift(post)
       res.json({
-        added: added,
-        post: post
+        posts: posts,
+        added: added
       })
     })().catch(next)
   } else {
@@ -330,30 +340,6 @@ app.put('/api/verify', (req, res, next) => {
     res.json({isVerified: isVerified})
   })().catch(next)
 })
-// app.post('/api/email/verify'), (req, res, next) => {
-//     console.log('verify account first time hello')
-//     let isVerified = false
-//   // (async() => {
-//   //   console.log('verify account first time', token, emailKey)
-
-//   //   const isVerified = false
-//   //   const { token } = req.body
-    // try {
-    //   const decoded = await jwtVerify(token, emailKey)
-    //   if(decoded.email) {
-    //     console.log('isVerified')
-    //     isVerified = true
-    //   }
-    // }catch (e) {
-    //   throw e
-    // }
-    // client.release()
-//     res.json({
-//       isVerified: isVerified
-//     })
-//   //   // console.log('the first one should expire and not working')
-//   // })().catch(e => console.error(e.stack))
-// }
 
 app.post('/api/login', (req, res, next) => {
   (async() => {
