@@ -37,7 +37,7 @@ class Feed extends Component {
   render() {
     let { posts } = this.props
     return (
-        <div>{ posts? 
+        <div>{ posts?
             Object.keys(posts).map((key, idx) => {
               return <FeedItem post={posts[key]} key={idx} />
             })
@@ -52,10 +52,11 @@ Feed.PropTypes = {
 }
 
 const FeedItem = (props) => {
-  const { content, avatar, tag, username } = props.post
+  console.log('feed item attr', props.post)
+  const { content, avatar, tag, username, created_at } = props.post
   return (
     <Card>
-      <FeedHeader date={'5 mins ago'} profile_img={avatar} username={username} />
+      <FeedHeader date={created_at} profile_img={avatar} username={username} />
       <FeedPost post={content}/>
       {tag? <FeedTag post={tag}/> : null}
       <FeedStatus {...props.post} />
@@ -65,7 +66,7 @@ const FeedItem = (props) => {
 
 // presentational
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   width: 100%;
   display: inline-flex;
   padding: 1rem 2rem;

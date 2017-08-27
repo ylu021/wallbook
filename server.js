@@ -13,6 +13,8 @@ const bodyParser = require('body-parser')
 const port = 8080
 const { passportAuth, encrypt, decrypt, jwtSign, jwtSignLogined, jwtVerify, jwtDecode, generateKey, sendEmailConfirmation } = require('./auth')
 
+const moment = require('moment')
+
 // create global async redis client
 bluebird.promisifyAll(redis.RedisClient.prototype)
 const redisClient = redis.createClient()
@@ -90,6 +92,9 @@ async function getPosts() {
     }
     let likes = await query('SELECT COUNT(post_id) AS count FROM Likes WHERE post_id = $1', [post.id])
     post['likes'] = likes.rows[0].count
+
+    // convert to relative times
+    post['created_at'] = moment(post['created_at']).fromNow()
     return post
   }))
   client.release()
@@ -109,6 +114,7 @@ app.get('/api/posts/liked', passportAuth().authenticate(), (req, res, next) => {
         console.log(liked)
         post['liked'] = +liked.rows[0].count === '0' ? false : true
         post['id'] = post.id
+
         return post
       }))
     client.release()
