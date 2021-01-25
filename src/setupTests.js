@@ -3,4 +3,5 @@ const localStorageMock = {
   setItem: jest.fn(),
   clear: jest.fn()
 };
-global.localStorage = localStorageMock
+// global.localStorage = localStorageMock;
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });

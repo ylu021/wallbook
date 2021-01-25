@@ -54,10 +54,13 @@
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom --setupFile ./src/setupTests.js",
     "eject": "react-scripts eject",
     "server": "nodemon server.js",
     "client": "react-scripts start"
+  },
+  "jest": {
+    "setupFiles": ["jest-localstorage-mock"],
   },
   "proxy": "http://localhost:8080/"
 }
