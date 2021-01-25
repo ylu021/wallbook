@@ -59,8 +59,5 @@
     "server": "nodemon server.js",
     "client": "react-scripts start"
   },
-  "jest": {
-    "setupFiles": ["jest-localstorage-mock"],
-  },
   "proxy": "http://localhost:8080/"
 }
